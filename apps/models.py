@@ -5,6 +5,20 @@ from django.db import models
 import uuid
 
 
+class LoginInfo(models.Model):
+    TYPE_CHOICES = (
+        ('GEN', u'GEN'),
+        ('WEIBO', u'WEIBO'),
+        ('QQ', u'QQ'),
+        ('WEIXIN', u'WEIXIN'),
+    )
+    type = models.CharField("type", choices=TYPE_CHOICES, max_length=64, default='GEN')
+    uid = models.CharField("username", max_length=64)
+    psw = models.CharField("passwd", max_length=64)
+    token = models.CharField("third_token", max_length=128, blank=True, null=True)
+    appendix = models.CharField("appendix", max_length=128, blank=True, null=True)
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+
 class UserInfo(models.Model):
     TYPE_CHOICES = (
         ('GEN', u'GEN'),

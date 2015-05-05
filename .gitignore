@@ -1,0 +1,16 @@
+.project
+.pydevproject
+*.pyc
+django-opera.pid
+error.log
+ok.log
+.fcgi_debug.py
+.DS_*
+logs
+.settings
+logs/passport.log
+*#
+sftp-config.json
+./static/admin/*
+.idea/*
+media

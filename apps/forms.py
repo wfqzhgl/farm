@@ -44,11 +44,12 @@ class UserInfoForm(ModelForm):
 #         if self.status == 'draft' and self.pub_date is not None:
 #             raise ValidationError('Draft entries may not have a publication date.')
 
-class LoginForm(forms.Form):
+class LoginForm(ModelForm):
     """
     """
-    uid = forms.CharField(max_length=254)
-    psw = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    class Meta:
+        model = LoginInfo
+        fields = '__all__'
     def __init__(self, request=None, *args, **kwargs):
         """
         """
@@ -57,23 +58,23 @@ class LoginForm(forms.Form):
         self.token = None
         super(LoginForm, self).__init__(*args, **kwargs)
     def clean(self):
+        ltype = self.cleaned_data.get('type')
         uid = self.cleaned_data.get('uid')
         psw = self.cleaned_data.get('psw')
 
-        if uid and psw:
-            self.user_cache = authenticate(uid=uid,
-                                           psw=psw)
+        if type and uid and psw:
+            self.user_cache = authenticate(ltype, uid, psw)
             if self.user_cache is None:
                 raise forms.ValidationError(
                     'invalid_login',
                     code='invalid_login'
                 )
-        return self.cleaned_dat
+        return self.cleaned_data
     def get_user(self):
         return self.user_cache
     
     
-def authenticate(uid, psw):
+def authenticate(ltype, uid, psw):
     user = UserInfo.objects.filter(uid=uid)
     if not user:
         return None

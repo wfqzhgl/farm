@@ -30,9 +30,11 @@ def reg(request):
         
     return dict(code=code, msg=msg, value=[userinfo])
 
+@csrf_exempt
+@render_to_json
 def login(request):
     """登录"""
-    fm = LoginForm(request.POST)
+    fm = LoginForm(request, request.POST)
     code = 0
     msg = ''
     userinfo = None
