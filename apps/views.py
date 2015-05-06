@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from forms import *
 import os
+import logging
 from public.utils import render_to_json, gen_file_name, handle_uploaded_file
 
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @render_to_json
@@ -16,7 +18,7 @@ def reg(request):
     code = 0
     msg = ''
     userinfo = None
-    print request.POST
+    logger.debug('request.POST:%s' % request.POST)
     if fm.is_valid():
         userinfo = fm.save()
         userinfo = userinfo.__dict__
@@ -38,7 +40,7 @@ def login(request):
     code = 0
     msg = ''
     userinfo = None
-    print request.POST
+    logger.debug('request.POST:%s' % request.POST)
     if fm.is_valid():
         userinfo = fm.get_user()
     else:
@@ -139,11 +141,11 @@ def upload_time_line(request):
 @csrf_exempt
 @render_to_json
 def upload(request):
-    fm = PicForm(request.POST)
+    fm = PicForm(request.POST, request.FILES)
     code = 0
     msg = ''
     url = ''
-    print request.POST
+    logger.debug('request.FILES:%s' % request.FILES)
     if fm.is_valid():
         pic = fm.save()
         if 'file' in request.FILES:

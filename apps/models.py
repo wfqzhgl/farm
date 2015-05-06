@@ -13,10 +13,14 @@ class LoginInfo(models.Model):
         ('WEIXIN', u'WEIXIN'),
     )
     type = models.CharField("type", choices=TYPE_CHOICES, max_length=64, default='GEN')
-    uid = models.CharField("username", max_length=64)
-    psw = models.CharField("passwd", max_length=64)
-    token = models.CharField("third_token", max_length=128, blank=True, null=True)
+    uid = models.CharField("username", max_length=64, blank=True, null=True)
+    psw = models.CharField("passwd", max_length=64, blank=True, null=True)
+    portrait = models.CharField("pic", max_length=256, blank=True, null=True)
+    self_desc = models.CharField("self_desc", max_length=128, blank=True, null=True)
     appendix = models.CharField("appendix", max_length=128, blank=True, null=True)
+    third_token = models.CharField("third_token", max_length=128, blank=True, null=True)
+    third_id = models.CharField("third_id", max_length=128, blank=True, null=True)
+    third_u_info = models.CharField("third_u_info", max_length=128, blank=True, null=True)
     created = models.DateTimeField("创建时间", auto_now_add=True)
 
 class UserInfo(models.Model):

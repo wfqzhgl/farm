@@ -98,7 +98,7 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 
-MEDIA_URL = 'http://121.42.43.55/media/'
+MEDIA_URL = 'http://121.42.43.55:81/media/'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/web/farm/static/'

@@ -61,9 +61,22 @@ class LoginForm(ModelForm):
         ltype = self.cleaned_data.get('type')
         uid = self.cleaned_data.get('uid')
         psw = self.cleaned_data.get('psw')
+        #
+        portrait = self.cleaned_data.get('portrait')
+        self_desc = self.cleaned_data.get('self_desc')
+        appendix = self.cleaned_data.get('appendix')
+        third_token = self.cleaned_data.get('third_token')
+        third_id = self.cleaned_data.get('third_id')
+        third_u_info = self.cleaned_data.get('third_u_info')
 
         if type and uid and psw:
-            self.user_cache = authenticate(ltype, uid, psw)
+            self.user_cache = authenticate(ltype, uid, psw,
+                                           portrait=portrait,
+                                           self_desc=self_desc,
+                                           appendix=appendix,
+                                           third_token=third_token,
+                                           third_id=third_id,
+                                           third_u_info=third_u_info)
             if self.user_cache is None:
                 raise forms.ValidationError(
                     'invalid_login',
@@ -74,13 +87,32 @@ class LoginForm(ModelForm):
         return self.user_cache
     
     
-def authenticate(ltype, uid, psw):
-    user = UserInfo.objects.filter(uid=uid)
-    if not user:
-        return None
-    user = user[0]
-    if user.psw != psw:
-        return None
+def authenticate(ltype, uid, psw, **kargs):
+    if ltype == 'GEN':
+        user = UserInfo.objects.filter(type=ltype, uid=uid)
+        if not user:
+            return None
+        user = user[0]
+        if user.psw != psw:
+            return None
+    else:
+        third_id = kargs.get('third_id')
+        if not third_id:
+            return None
+        user = UserInfo.objects.filter(type=ltype, third_id=third_id)
+        if user:
+            user = user[0]
+            # update
+            for k, v in kargs.items():
+                if hasattr(user, k) and v:
+                    setattr(user, k, v)
+            user.save()
+        else:
+            # add to userinfo
+            new_uid = '%s-%s' % (ltype, third_id)
+            new_psw = '123456'
+            user = UserInfo(type=ltype, name=new_uid, uid=new_uid, psw=new_psw, **kargs)
+            user.save()
     return get_token_and_user(user)
 
 def get_token_and_user(user):
