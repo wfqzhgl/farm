@@ -62,6 +62,9 @@ class LoginForm(ModelForm):
         uid = self.cleaned_data.get('uid')
         psw = self.cleaned_data.get('psw')
         #
+        name = self.cleaned_data.get('name')
+        email = self.cleaned_data.get('email')
+        gender = self.cleaned_data.get('gender')
         portrait = self.cleaned_data.get('portrait')
         self_desc = self.cleaned_data.get('self_desc')
         appendix = self.cleaned_data.get('appendix')
@@ -69,8 +72,11 @@ class LoginForm(ModelForm):
         third_id = self.cleaned_data.get('third_id')
         third_u_info = self.cleaned_data.get('third_u_info')
 
-        if type and uid and psw:
+        if (ltype == 'GEN' and uid and psw) or (ltype != 'GEN' and third_id):
             self.user_cache = authenticate(ltype, uid, psw,
+                                           name=name,
+                                           gender=gender,
+                                           email=email,
                                            portrait=portrait,
                                            self_desc=self_desc,
                                            appendix=appendix,
@@ -79,6 +85,11 @@ class LoginForm(ModelForm):
                                            third_u_info=third_u_info)
             if self.user_cache is None:
                 raise forms.ValidationError(
+                    'invalid_login',
+                    code='invalid_login'
+                )
+        else:
+            raise forms.ValidationError(
                     'invalid_login',
                     code='invalid_login'
                 )
