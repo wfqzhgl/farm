@@ -13,6 +13,7 @@ from django.conf import settings
 import copy
 import json
 from  models import *
+from helper import *
 from public.utils import md5_hex
 import time
 
@@ -122,7 +123,7 @@ def authenticate(ltype, uid, psw, **kargs):
             # add to userinfo
             new_uid = '%s-%s' % (ltype, third_id)
             new_psw = '123456'
-            user = UserInfo(type=ltype, name=new_uid, uid=new_uid, psw=new_psw, **kargs)
+            user = UserInfo(type=ltype, uid=new_uid, psw=new_psw, **kargs)
             user.save()
     return get_token_and_user(user)
 
@@ -135,8 +136,7 @@ def get_token_and_user(user):
     del val['psw']
     val['token'] = token
     print 'val=', val
-    if not settings.REDIS_CLIENT.hexists(settings.HASHKEY_APPS_USER_TOKEN, token):
-        settings.REDIS_CLIENT.hset(settings.HASHKEY_APPS_USER_TOKEN, token, json.dumps(val))
+    log_in_token(token,val)
     return val
     
     

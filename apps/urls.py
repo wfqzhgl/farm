@@ -12,4 +12,12 @@ urlpatterns = patterns('apps.views',
                         url(r'^register[/]?$', "reg", name='reg'),
                         url(r'^login[/]?$', "login", name='login'),
                         url(r'^upload[/]?$', "upload", name='upload'),
+                        
+                        url(r'^logout[/]?$', "logout", name='logout'),
+                        url(r'^rdm_cus[/]?$', "rdm_user_info", name='rdm_user_info'),
+                        url(r'^time_line[/]?$', "get_time_line", name='get_time_line'),
+                        url(r'^farm_list[/]?$', "get_farm_list", name='get_farm_list'),
+                        
+                        
+                        
                        )

@@ -13,7 +13,7 @@ class LoginInfo(models.Model):
         ('WEIXIN', u'WEIXIN'),
     )
     type = models.CharField("type", choices=TYPE_CHOICES, max_length=64, default='GEN')
-    name = models.CharField("昵称", max_length=64, default='')
+    name = models.CharField("昵称", max_length=64, default='', blank=True, null=True)
     gender = models.CharField("性别", max_length=32, default='UNKNOWN')
     email = models.EmailField('email', blank=True, null=True)
     uid = models.CharField("username", max_length=64, blank=True, null=True)
@@ -39,7 +39,7 @@ class UserInfo(models.Model):
         ('UNKNOWN', u'未知')
     )
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField("昵称", max_length=64, default='')
+    name = models.CharField("昵称", max_length=64, default='', blank=True, null=True)
     uid = models.CharField("username", max_length=64, unique=True)
     gender = models.CharField("性别", choices=GENDER_CHOICES, max_length=32, default='UNKNOWN')
     type = models.CharField("type", choices=TYPE_CHOICES, max_length=64, default='GEN')
