@@ -8,7 +8,7 @@ from helper import *
 import random
 import os
 import logging
-from public.utils import render_to_json, gen_file_name, handle_uploaded_file
+from public.utils import render_to_json, gen_file_name, handle_uploaded_file, get_page_obj
 
 logger = logging.getLogger(__name__)
 
@@ -94,12 +94,25 @@ def rdm_user_info(request):
     userinfo = get_dict_from_model(userinfo)
     return dict(code=code, msg=msg, value=[userinfo])
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_time_line(request):
     """土地时间轴"""
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    fid = request.REQUEST.get('fid')
+    page = request.REQUEST.get('page', 0)
+    if not uid or not fid:
+        return dict(code=1, msg='error', value=[])
+    prs = PlantRecord.objects.filter(owner__uid=uid, farm__id=fid, finished=False)
+    if not prs:
+        return dict(code=1, msg='no timeline', value=[])
+    prs = prs[0]
+    tls = TimelineInfo.objects.filter(plantrecord=prs).order_by('-created')
+    objs = get_page_obj(request, tls, settings.ROWS_DEFAULT)
+    res = [get_dict_from_model(obj) for obj in objs]
+    return dict(code=code, msg=msg, value=res)
 
 @login_required
 def get_farm_info(request):

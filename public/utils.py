@@ -14,7 +14,7 @@ import urllib
 import smtplib
 from email.mime.text import MIMEText
 import logging
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import connections, transaction
@@ -36,7 +36,7 @@ def render_to_json(func):
     def render(request, *args, **kwargs):
         return_data = func(request, *args, **kwargs)
         if isinstance(return_data, dict):
-            data = json.dumps(return_data)
+            data = json.dumps(return_data, cls=CJsonEncoder)
             return HttpResponse(data)
         else:
             return return_data
@@ -51,12 +51,12 @@ def gen_file_name(file):
         return ''
     path = str(file)
     filename = os.path.splitext(path)[0]
-    ext=os.path.splitext(path)[1]
-    hash_name=hashlib.md5(filename).hexdigest()
+    ext = os.path.splitext(path)[1]
+    hash_name = hashlib.md5(filename).hexdigest()
     fn = time.strftime('%Y%m%d%H%M%S')
-    return fn+'_'+hash_name+ext
+    return fn + '_' + hash_name + ext
 
-def handle_uploaded_file(path,f):
+def handle_uploaded_file(path, f):
     """
         upload file to specific path(include file name)
     """
@@ -335,17 +335,17 @@ def send_mail(to_list, sub, content,
         logger.error("--------error sending email:" + str(e))
         return False
 
-def handle_uploaded_file(path,f):
-    """
-        upload file to specific path(include file name)
-    """
-    if not f:
-        return
-    destination = open(path, 'wb+')
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
 
+class CJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj)
+        
+        
 if __name__ == "__main__":
     import doctest
 

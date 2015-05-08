@@ -38,3 +38,7 @@ class PicAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Pic, PicAdmin)
+
+class PlantRecordAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(PlantRecord, PlantRecordAdmin)

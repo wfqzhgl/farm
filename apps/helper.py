@@ -19,11 +19,19 @@ def log_in_token(token, user_dict):
         settings.REDIS_CLIENT.hset(settings.HASHKEY_APPS_USER_TOKEN, token, json.dumps(user_dict))
 
 
-def get_dict_from_model(userinfo):
-    val = copy.copy(userinfo.__dict__)
+def get_dict_from_model(Obj):
+    val = copy.copy(Obj.__dict__)
     del val['_state']
-    if hasattr(userinfo, 'created'):
+    if hasattr(Obj, 'created'):
         del val['created']
-    if hasattr(userinfo, 'psw'):
+    if hasattr(Obj, 'psw'):
         del val['psw']
+    
+    if hasattr(Obj, 'comments'):
+        comments = []
+        for oo in Obj.comments.order_by('-created'):
+            oo_dic = oo.__dict__
+            del oo_dic['_state']
+            comments.append(oo_dic)
+        val['comments'] = comments
     return val

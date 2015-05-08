@@ -14,7 +14,7 @@ class LoginInfo(models.Model):
     )
     type = models.CharField("type", choices=TYPE_CHOICES, max_length=64, default='GEN')
     name = models.CharField("昵称", max_length=64, default='', blank=True, null=True)
-    gender = models.CharField("性别", max_length=32, default='UNKNOWN')
+    gender = models.CharField("性别", max_length=32, default='UNKNOWN', blank=True, null=True)
     email = models.EmailField('email', blank=True, null=True)
     uid = models.CharField("username", max_length=64, blank=True, null=True)
     psw = models.CharField("passwd", max_length=64, blank=True, null=True)
@@ -142,6 +142,7 @@ class PlantRecord(models.Model):
     """种植记录
     """
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
     farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
     plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id")
     begin = models.DateField('date')
@@ -175,6 +176,7 @@ class Comment(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey("UserInfo", verbose_name="uid", blank=True, null=True)
     desc = models.CharField("desc", max_length=200)
+    created = models.DateTimeField("创建时间", auto_now_add=True)
     class Meta:
 #         unique_together = (("brand", "province"),)
         verbose_name = "Comment"

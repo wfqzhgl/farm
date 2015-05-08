@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 """
 Django settings for farm project.
 
@@ -109,3 +110,6 @@ REDIS_CLIENT = redis.Redis(host="127.0.0.1", port=6379)
 ##cache key
 #hashkey for uid Token
 HASHKEY_APPS_USER_TOKEN='hashkey_apps_user_token'
+
+#默认每页行数
+ROWS_DEFAULT = 30
