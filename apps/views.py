@@ -68,20 +68,42 @@ def logout(request):
         msg = e.message
     return dict(code=code, msg=msg, value=[])
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_user_info(request):
     """获取用户详细信息"""
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    if not uid:
+        return dict(code=1, msg='no uid', value=[])
+    try:
+        userinfo = UserInfo.objects.get(uid=uid)
+        userinfo = get_dict_from_model(userinfo)
+    except Exception, e:
+        code = 1
+        return dict(code=1, msg='uid error', value=[])
+    return dict(code=code, msg=msg, value=[userinfo])
 
 
-@login_required
+@csrf_exempt
+@render_to_json
 def modify_user_info(request):
     """个人信息修改"""
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    try:
+        userinfo = UserInfo.objects.get(uid=uid)
+    except Exception, e:
+        code = 1
+        return dict(code=1, msg='uid error', value=[])
+#     print request.POST 
+    for k, v in request.POST.items():
+        if hasattr(userinfo, k) and v:
+            setattr(userinfo, k, v)
+    userinfo.save()
+    return dict(code=code, msg=msg, value=[])
 
 @csrf_exempt
 @render_to_json
@@ -114,70 +136,104 @@ def get_time_line(request):
     res = [get_dict_from_model(obj) for obj in objs]
     return dict(code=code, msg=msg, value=res)
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_farm_info(request):
     """获取土地详情"""
     code = 0
     msg = 'OK'
-    pass
+    fid = request.REQUEST.get('fid')
+    pic_count = request.REQUEST.get('pic_count')
+    if not fid:
+        return dict(code=1, msg='no fid', value=[])
+    try:
+        farm = FarmInfo.objects.get(id=fid)
+        farm = get_dict_from_model(farm)
+    except Exception, e:
+        code = 1
+        return dict(code=1, msg='fid error', value=[])
+    return dict(code=code, msg=msg, value=[farm])
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_farm_list(request):
     """获取用户的土地列表"""
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    others = request.REQUEST.get('others')
+    farm_self = []
+    farm_admire = []
+    farm_rdm = []
+    if uid:
+        farmlist = []
+        for pr in PlantRecord.objects.filter(owner__uid=uid, finished=False):
+            farmlist.append(pr.farm)
+        if farmlist:
+            farm_self = [get_dict_from_model(obj) for obj in farmlist]
+    if others is not None:
+        pass        
+    
+    return dict(code=code, msg=msg, value=[farm_self, farm_admire, farm_rdm])
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_buddy_list(request):
     """获取用户好友列表"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def buddy_follow(request):
     """添加好友"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_free_farm_list(request):
     """获取尚未租种的土地列表"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_op_history(request):
     """获取操作记录"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_plant_for_farm(request):
     """获取土地可以播种的农作物列表"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def apply_for_farm(request):
     """土地具体操作"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def get_comments_of_timeline(request):
     """获取图片评论信息"""
     code = 0
     msg = 'OK'
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def edit_comment(request):
     """图片评论编辑"""
     code = 0
@@ -185,7 +241,8 @@ def edit_comment(request):
     pass
 
 
-@login_required
+@csrf_exempt
+@render_to_json
 def search(request):
     """土地，农作物搜索（暂略）"""
     code = 0
@@ -193,7 +250,8 @@ def search(request):
     pass
 
 
-@login_required
+@csrf_exempt
+@render_to_json
 def upload_time_line(request):
     """图片上传"""
     code = 0
@@ -226,12 +284,14 @@ def upload(request):
         
     return dict(code=code, msg=msg, value=[url])
 
-@login_required
+@csrf_exempt
+@render_to_json
 def modify_op(request):
     """操作记录修改"""
     pass
 
-@login_required
+@csrf_exempt
+@render_to_json
 def recharge(request):
     """充值"""
     pass

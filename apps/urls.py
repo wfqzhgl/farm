@@ -16,8 +16,12 @@ urlpatterns = patterns('apps.views',
                         url(r'^logout[/]?$', "logout", name='logout'),
                         url(r'^rdm_cus[/]?$', "rdm_user_info", name='rdm_user_info'),
                         url(r'^time_line[/]?$', "get_time_line", name='get_time_line'),
+                        
+                        url(r'^farm_info[/]?$', "get_farm_info", name='get_farm_info'),
                         url(r'^farm_list[/]?$', "get_farm_list", name='get_farm_list'),
                         
+                        url(r'^user_info[/]?$', "get_user_info", name='get_user_info'),
+                        url(r'^modify[/]?$', "modify_user_info", name='modify_user_info'),
                         
                         
                        )
