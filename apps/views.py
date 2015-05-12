@@ -103,7 +103,7 @@ def modify_user_info(request):
         if hasattr(userinfo, k) and v:
             setattr(userinfo, k, v)
     userinfo.save()
-    return dict(code=code, msg=msg, value=[])
+    return dict(code=code, msg=msg, value=[get_dict_from_model(userinfo)])
 
 @csrf_exempt
 @render_to_json
@@ -167,13 +167,32 @@ def get_farm_list(request):
     farm_rdm = []
     if uid:
         farmlist = []
-        for pr in PlantRecord.objects.filter(owner__uid=uid, finished=False):
-            farmlist.append(pr.farm)
+        for pr in PlantRecord.objects.filter(owner__uid=uid).order_by('-created'):
+            if pr.farm not in farmlist:
+                farmlist.append(pr.farm)
         if farmlist:
             farm_self = [get_dict_from_model(obj) for obj in farmlist]
     if others is not None:
-        pass        
-    
+        # radom
+        fcount = FarmInfo.objects.count()
+        farmlist = []
+        if fcount <= 6:
+            for farm in FarmInfo.objects.all():
+                if farm not in farmlist:
+                    farmlist.append(farm)
+        else:
+            baseindex = random.randint(0, fcount - 7)
+            for i in xrange(6):
+                farmlist.append(FarmInfo.objects.all()[baseindex + i])
+        farm_rdm = [get_dict_from_model(obj) for obj in farmlist]
+        # admire
+        farmlist = []
+        for tl in TimelineInfo.objects.order_by('-admire'):
+            if tl.plantrecord.farm not in farmlist:
+                farmlist.append(tl.plantrecord.farm)
+            if len(farmlist) >= 4:
+                break
+        farm_admire = [get_dict_from_model(obj) for obj in farmlist]
     return dict(code=code, msg=msg, value=[farm_self, farm_admire, farm_rdm])
 
 @csrf_exempt
@@ -198,7 +217,10 @@ def get_free_farm_list(request):
     """获取尚未租种的土地列表"""
     code = 0
     msg = 'OK'
-    pass
+    fids = PlantRecord.objects.filter(finished=False).values_list('farm_id', flat=True)
+    fis = FarmInfo.objects.exclude(id__in=fids)
+    farm_list = [get_dict_from_model(obj) for obj in fis]
+    return dict(code=code, msg=msg, value=farm_list)
 
 @csrf_exempt
 @render_to_json

@@ -7,6 +7,8 @@ Created on 2015年5月7日
 from django.conf import settings
 import json
 import copy
+import os
+from models import *
 
 def log_out_token(token):
     if not settings.REDIS_CLIENT.hexists(settings.HASHKEY_APPS_USER_TOKEN, token):
@@ -34,4 +36,14 @@ def get_dict_from_model(Obj):
             del oo_dic['_state']
             comments.append(oo_dic)
         val['comments'] = comments
+    if isinstance(Obj, FarmInfo):
+        rs = PlantRecord.objects.filter(farm=Obj, finished=False)
+        if rs:
+            val['owner'] = get_dict_from_model(rs[0].owner)
+            val['plant'] = get_dict_from_model(rs[0].plant)
+        pics = []
+        for pic in Obj.pics.all():
+            pics.append(settings.MEDIA_URL + os.path.basename(pic.url))
+        val['pics'] = pics
+        
     return val

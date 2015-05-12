@@ -23,5 +23,8 @@ urlpatterns = patterns('apps.views',
                         url(r'^user_info[/]?$', "get_user_info", name='get_user_info'),
                         url(r'^modify[/]?$', "modify_user_info", name='modify_user_info'),
                         
+                        url(r'^free_farm_list[/]?$', "get_free_farm_list", name='get_free_farm_list'),
+                        
+                        
                         
                        )

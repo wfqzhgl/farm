@@ -62,7 +62,8 @@ class UserInfo(models.Model):
 #         unique_together = (("brand", "province"),)
         verbose_name = "UserInfo"
         verbose_name_plural = "UserInfo MAG"
-        
+    def __unicode__(self):
+        return self.uid
         
 class OperationInfo(models.Model):
     """PLANT, WEED, WATERING, DEBUG, PICK, EMOVE, OTHER
@@ -101,7 +102,8 @@ class PlantInfo(models.Model):
 #         unique_together = (("brand", "province"),)
         verbose_name = "PlantInfo"
         verbose_name_plural = "PlantInfo MAG"
-        
+    def __unicode__(self):
+        return self.name
         
 class FarmInfo(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -115,13 +117,14 @@ class FarmInfo(models.Model):
     position_x = models.FloatField("x")
     position_y = models.FloatField("y")
     pics = models.ManyToManyField("Pic", verbose_name="pics", blank=True, null=True)
-    plant = models.ForeignKey("PlantInfo", verbose_name="plant", blank=True, null=True)
-    owner = models.ForeignKey("UserInfo", verbose_name="owner", blank=True, null=True)
+#     plant = models.ForeignKey("PlantInfo", verbose_name="plant", blank=True, null=True)
+#     owner = models.ForeignKey("UserInfo", verbose_name="owner", blank=True, null=True)
     class Meta:
 #         unique_together = (("brand", "province"),)
         verbose_name = "FarmInfo"
         verbose_name_plural = "FarmInfo MAG"
-        
+    def __unicode__(self):
+        return self.name
         
 class TimelineInfo(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -147,6 +150,7 @@ class PlantRecord(models.Model):
     plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id")
     begin = models.DateField('date')
     end = models.DateField('date', blank=True, null=True)
+    havest = models.CharField("havest", max_length=600, blank=True, null=True)
     finished = models.BooleanField('finished', default=False)
     created = models.DateTimeField("创建时间", auto_now_add=True)
     
