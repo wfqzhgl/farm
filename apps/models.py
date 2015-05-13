@@ -160,20 +160,20 @@ class PlantRecord(models.Model):
         verbose_name_plural = "PlantRecord MAG"
 
 
-class Havest(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    plantrecord = models.ForeignKey("PlantRecord", verbose_name="PlantRecord id")
-    latest = models.FloatField("latest")
-    remain = models.FloatField("remain")
-    date = models.DateField('date')
-    update_date = models.DateField('update_date')
-    attachment = models.CharField("attachment", max_length=200, blank=True, null=True)
-    created = models.DateTimeField("创建时间", auto_now_add=True)
-    
-    class Meta:
-#         unique_together = (("brand", "province"),)
-        verbose_name = "Havest"
-        verbose_name_plural = "Havest MAG"
+# class Havest(models.Model):
+# #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     plantrecord = models.ForeignKey("PlantRecord", verbose_name="PlantRecord id")
+#     latest = models.FloatField("latest")
+#     remain = models.FloatField("remain")
+#     date = models.DateField('date')
+#     update_date = models.DateField('update_date')
+#     attachment = models.CharField("attachment", max_length=200, blank=True, null=True)
+#     created = models.DateTimeField("创建时间", auto_now_add=True)
+#     
+#     class Meta:
+# #         unique_together = (("brand", "province"),)
+#         verbose_name = "Havest"
+#         verbose_name_plural = "Havest MAG"
         
         
 class Comment(models.Model):

@@ -134,7 +134,8 @@ def get_time_line(request):
     tls = TimelineInfo.objects.filter(plantrecord=prs).order_by('-created')
     objs = get_page_obj(request, tls, settings.ROWS_DEFAULT)
     res = [get_dict_from_model(obj) for obj in objs]
-    return dict(code=code, msg=msg, value=res)
+    havest = [] if not prs.havest else prs.havest.split(',')
+    return dict(code=code, msg=msg, value=[res, havest])
 
 @csrf_exempt
 @render_to_json
