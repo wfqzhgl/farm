@@ -3,6 +3,7 @@
 
 from django.db import models
 import uuid
+from celery.worker.strategy import default
 
 
 class LoginInfo(models.Model):
@@ -95,7 +96,7 @@ class OperationInfo(models.Model):
 class PlantInfo(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField("name", max_length=64)
-    output_of_per_unit = models.FloatField("balance")
+    output_of_per_unit = models.FloatField("output_of_per_unit")
     pics = models.ManyToManyField("Pic", verbose_name="pics", blank=True, null=True)
     created = models.DateTimeField("创建时间", auto_now_add=True)
     class Meta:
@@ -117,7 +118,7 @@ class FarmInfo(models.Model):
     position_x = models.FloatField("x")
     position_y = models.FloatField("y")
     pics = models.ManyToManyField("Pic", verbose_name="pics", blank=True, null=True)
-#     plant = models.ForeignKey("PlantInfo", verbose_name="plant", blank=True, null=True)
+    plants = models.ManyToManyField("PlantInfo", verbose_name="可种植作物", blank=True, null=True)
 #     owner = models.ForeignKey("UserInfo", verbose_name="owner", blank=True, null=True)
     class Meta:
 #         unique_together = (("brand", "province"),)
@@ -175,7 +176,33 @@ class PlantRecord(models.Model):
 #         verbose_name = "Havest"
 #         verbose_name_plural = "Havest MAG"
         
-        
+class ChargeCard(models.Model):
+    """充值卡
+    """
+    num = models.CharField("卡号", max_length=64)
+    count = models.IntegerField("面额(元)", default=50)
+    invalid = models.BooleanField("无效", default=False)
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+    class Meta:
+#         unique_together = (("brand", "province"),)
+        verbose_name = "ChargeCard"
+        verbose_name_plural = "ChargeCard MAG"
+    def __unicode__(self):
+        return str(self.count) + ':' + self.num
+
+
+class ChargeHistory(models.Model):
+    """充值记录
+    """
+    uid = models.CharField("uid", max_length=64)
+    num = models.CharField("卡号", max_length=64)
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+    class Meta:
+        verbose_name = "ChargeHistory"
+        verbose_name_plural = "ChargeHistory MAG"
+    def __unicode__(self):
+        return self.uid + ':' + self.num
+    
 class Comment(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey("UserInfo", verbose_name="uid", blank=True, null=True)

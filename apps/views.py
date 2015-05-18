@@ -7,6 +7,7 @@ from forms import *
 from helper import *
 import random
 import os
+from datetime import datetime
 import logging
 from public.utils import render_to_json, gen_file_name, handle_uploaded_file, get_page_obj
 
@@ -54,6 +55,7 @@ def login(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def logout(request):
     """注销
     VEG_SESSION
@@ -68,8 +70,32 @@ def logout(request):
         msg = e.message
     return dict(code=code, msg=msg, value=[])
 
+
 @csrf_exempt
 @render_to_json
+@login_check
+def change_psw(request):
+    code = 0
+    msg = 'OK'
+    psw_old = request.REQUEST.get('psw_old')
+    psw_new_1 = request.REQUEST.get('psw_new_1')
+    psw_new_2 = request.REQUEST.get('psw_new_2')
+    userdict = get_userdict_from_token(request)
+    users = UserInfo.objects.filter(id=userdict['id'])
+    if psw_new_1 != psw_new_2:
+        return dict(code=1, msg='new psw not equls.', value=[])
+    if not users:
+        return dict(code=1, msg='user not exists.', value=[])
+    if users[0].psw != psw_old:
+        return dict(code=1, msg='psw_old error.', value=[])
+    users[0].psw = psw_new_1
+    users[0].save()
+    return dict(code=code, msg=msg, value=[])
+    
+
+@csrf_exempt
+@render_to_json
+@login_check
 def get_user_info(request):
     """获取用户详细信息"""
     code = 0
@@ -88,6 +114,7 @@ def get_user_info(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def modify_user_info(request):
     """个人信息修改"""
     code = 0
@@ -107,6 +134,7 @@ def modify_user_info(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def rdm_user_info(request):
     """随机获取一个用户信息"""
     code = 0
@@ -118,6 +146,7 @@ def rdm_user_info(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_time_line(request):
     """土地时间轴"""
     code = 0
@@ -139,6 +168,7 @@ def get_time_line(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_farm_info(request):
     """获取土地详情"""
     code = 0
@@ -157,6 +187,7 @@ def get_farm_info(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_farm_list(request):
     """获取用户的土地列表"""
     code = 0
@@ -198,6 +229,7 @@ def get_farm_list(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_buddy_list(request):
     """获取用户好友列表"""
     code = 0
@@ -206,6 +238,7 @@ def get_buddy_list(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def buddy_follow(request):
     """添加好友"""
     code = 0
@@ -214,6 +247,7 @@ def buddy_follow(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_free_farm_list(request):
     """获取尚未租种的土地列表"""
     code = 0
@@ -225,6 +259,7 @@ def get_free_farm_list(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_op_history(request):
     """获取操作记录"""
     code = 0
@@ -233,22 +268,61 @@ def get_op_history(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_plant_for_farm(request):
     """获取土地可以播种的农作物列表"""
     code = 0
     msg = 'OK'
-    pass
+    plants = []
+    fid = request.REQUEST.get('fid')
+    if not fid:
+        return dict(code=1, msg='no fid', value=[])
+    try:
+        farm = FarmInfo.objects.get(id=fid)
+        for plt in farm.plants.all():
+            plants.append(get_dict_from_model(plt))
+    except Exception, e:
+        code = 1
+        return dict(code=1, msg='fid error', value=[])
+    return dict(code=code, msg=msg, value=plants)
 
 @csrf_exempt
 @render_to_json
+@login_check
 def apply_for_farm(request):
-    """土地具体操作"""
+    """土地具体操作
+        fid     farm id
+        type    操作类型: PLANT, WEED, WATERING, DEBUG, PICK, EMOVE, OTHER
+        appdix     不同操作类型所需不同参数
+        PLANT 时需要参数；appdix 的值为plant id
+    """
     code = 0
     msg = 'OK'
-    pass
+    fid = request.REQUEST.get('fid')
+    type = request.REQUEST.get('type')
+    appdix = request.REQUEST.get('appdix')
+    
+    consume = request.REQUEST.get('consume', '1.0')
+    
+    userdict = get_userdict_from_token(request)
+    today = datetime.now().date()
+    plantrecord = None
+    if type == 'PLANT':
+        plant_id = appdix
+        prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
+        if prs:
+            return dict(code=1, msg='The farm not free.', value=[])
+        plantrecord = PlantRecord(owner_id=userdict['id'],
+                                  farm_id=fid, plant_id=plant_id, begin=today)
+        plantrecord.save()
+    op = OperationInfo(farm_id=fid, plantrecord=plantrecord, name=type, type=type,
+                       date=today, operator_id=userdict['id'], consume=consume)
+    op.save()
+    return dict(code=code, msg=msg, value=[])
 
 @csrf_exempt
 @render_to_json
+@login_check
 def get_comments_of_timeline(request):
     """获取图片评论信息"""
     code = 0
@@ -257,6 +331,7 @@ def get_comments_of_timeline(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def edit_comment(request):
     """图片评论编辑"""
     code = 0
@@ -266,6 +341,7 @@ def edit_comment(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def search(request):
     """土地，农作物搜索（暂略）"""
     code = 0
@@ -275,6 +351,7 @@ def search(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def upload_time_line(request):
     """图片上传"""
     code = 0
@@ -283,6 +360,7 @@ def upload_time_line(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def upload(request):
     fm = PicForm(request.POST, request.FILES)
     code = 0
@@ -309,12 +387,35 @@ def upload(request):
 
 @csrf_exempt
 @render_to_json
+@login_check
 def modify_op(request):
     """操作记录修改"""
     pass
 
 @csrf_exempt
 @render_to_json
+@login_check
 def recharge(request):
     """充值"""
-    pass
+    code = 0
+    msg = 'OK'
+    uid = request.REQUEST.get('uid')
+    charge = request.REQUEST.get('charge')
+    
+    ccs = ChargeCard.objects.filter(num=charge)
+    if not ccs:
+        return dict(code=1, msg='card error.', value=[])
+    us = UserInfo.objects.filter(uid=uid)
+    if not us:
+        return dict(code=1, msg='uid error.', value=[])
+    # update user
+    us[0].balance = us[0].balance + ccs[0].count
+    us[0].save()
+    # update card
+    ccs[0].invalid = True
+    ccs[0].save()
+    # add history
+    ch = ChargeHistory(uid=uid, num=charge)
+    ch.save()
+    return dict(code=code, msg=msg, value=[])
+    
