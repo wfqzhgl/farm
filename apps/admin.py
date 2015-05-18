@@ -42,3 +42,12 @@ admin.site.register(Pic, PicAdmin)
 class PlantRecordAdmin(admin.ModelAdmin):
     pass
 admin.site.register(PlantRecord, PlantRecordAdmin)
+
+class ChargeCardAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(ChargeCard, ChargeCardAdmin)
+
+class ChargeHistoryAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(ChargeHistory, ChargeHistoryAdmin)
+

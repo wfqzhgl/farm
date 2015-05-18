@@ -3,7 +3,6 @@
 
 from django.db import models
 import uuid
-from celery.worker.strategy import default
 
 
 class LoginInfo(models.Model):
