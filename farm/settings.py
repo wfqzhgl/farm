@@ -113,3 +113,5 @@ HASHKEY_APPS_USER_TOKEN='hashkey_apps_user_token'
 
 #默认每页行数
 ROWS_DEFAULT = 30
+#token header key
+VEG_SESSION_HEADER_KEY = "VEGSESSION"

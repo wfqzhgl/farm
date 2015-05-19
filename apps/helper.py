@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def login_check(func):
     def render(request, *args, **kwargs):
-        token = request.META.get("VEG_SESSION")
+        token = request.META.get(settings.VEG_SESSION_HEADER_KEY)
         if token and settings.REDIS_CLIENT.hexists(settings.HASHKEY_APPS_USER_TOKEN, token):
             return_data = func(request, *args, **kwargs)
             return return_data

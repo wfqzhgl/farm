@@ -58,11 +58,10 @@ def login(request):
 @login_check
 def logout(request):
     """注销
-    VEG_SESSION
     """
     code = 0
     msg = 'OK'
-    token = request.META.get('VEG_SESSION')
+    token = request.META.get(settings.VEG_SESSION_HEADER_KEY)
     try:
         log_out_token(token)
     except Exception, e:
@@ -187,7 +186,7 @@ def get_farm_info(request):
 
 @csrf_exempt
 @render_to_json
-@login_check
+# @login_check
 def get_farm_list(request):
     """获取用户的土地列表"""
     code = 0
