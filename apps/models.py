@@ -64,7 +64,30 @@ class UserInfo(models.Model):
         verbose_name_plural = "UserInfo MAG"
     def __unicode__(self):
         return self.uid
-        
+    
+    
+class OperationCost(models.Model):
+    OP_CHOICES = (
+        ('PLANT', u'PLANT'),
+        ('WEED', u'WEED'),
+        ('WATERING', u'WATERING'),
+        ('DEBUG', u'DEBUG'),
+        ('PICK', u'PICK'),
+        ('REMOVE', u'REMOVE'),
+        ('OTHER', u'OTHER'),
+    )
+    type = models.CharField("type", choices=OP_CHOICES, max_length=32)
+    consume = models.FloatField("consume")
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+    
+    class Meta:
+#         unique_together = (("brand", "province"),)
+        verbose_name = "OperationCost"
+        verbose_name_plural = "OperationCost MAG"
+    def __unicode__(self):
+        return self.uid
+    
+           
 class OperationInfo(models.Model):
     """PLANT, WEED, WATERING, DEBUG, PICK, EMOVE, OTHER
     """

@@ -301,7 +301,11 @@ def apply_for_farm(request):
     type = request.REQUEST.get('type')
     appdix = request.REQUEST.get('appdix')
     
-    consume = request.REQUEST.get('consume', '1.0')
+    # get cost
+    consume = request.REQUEST.get('consume', '0.0')
+    ocs = OperationCost.objects.filter(type=type)
+    if ocs:
+        consume = ocs[0].consume
     
     userdict = get_userdict_from_token(request)
     today = datetime.now().date()
