@@ -105,33 +105,8 @@ def get_location_from_ip(ip, use_local=False):
     if not ip:
         return None
     ip = ip.strip()
+    return parse_ip_by_local(ip)
 
-    if use_local:
-        return parse_ip_by_local(ip)
-    else:
-        return parse_ip_by_oupeng(ip)
-
-
-def parse_ip_by_oupeng(ip, url="http://api.oupeng.com/lbs/"):
-    """
-     * - Fetch location for request ip:
-     *   http://api.oupeng.com/lbs
-     * - Fetch location for specified ip:
-     *   http://api.oupeng.com/lbs/?ip=219.236.246.240
-
-     return (country,province,city,isp)
-    """
-    try:
-        data = {}
-        if ip:
-            data['ip'] = ip
-        response = urllib2.urlopen(url + "?" + urllib.urlencode(data), timeout=5)
-        page = response.read()
-        pages = page.split('|')
-        return ('', '', pages[0].decode('utf-8'), pages[1].decode('utf-8'))
-    except Exception, e:
-        logger.error(str(e))
-        return None
 
 
 def parse_ip_by_local(ip):

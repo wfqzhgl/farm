@@ -145,7 +145,7 @@ def rdm_user_info(request):
 
 @csrf_exempt
 @render_to_json
-@login_check
+# @login_check
 def get_time_line(request):
     """土地时间轴"""
     code = 0
