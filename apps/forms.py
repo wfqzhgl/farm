@@ -2,7 +2,7 @@
 '''
 Created on 2015年5月4日
 
-@author: faqingw
+@author: pure
 '''
 
 from django.forms import ModelForm

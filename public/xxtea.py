@@ -6,7 +6,7 @@ __version__ = '0.0.1'
 
     xxtea implemented in python (非标准)
     Based on https://github.com/lyxint/xxtea
-    Modified by faqingw@oupeng.com (利用ctypes解决与java移位运算的结果不兼容问题)
+    Modified by pure (利用ctypes解决与java移位运算的结果不兼容问题)
 
 """
 import itertools
