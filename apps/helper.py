@@ -33,7 +33,7 @@ def log_in_token(token, user_dict):
     if not settings.REDIS_CLIENT.hexists(settings.HASHKEY_APPS_USER_TOKEN, token):
         settings.REDIS_CLIENT.hset(settings.HASHKEY_APPS_USER_TOKEN, token, json.dumps(user_dict))
 
-def get_userdict_from_token(request,header_name="VEG_SESSION"):
+def get_userdict_from_token(request,header_name="HTTP_VEGSESSION"):
     token = request.META.get(header_name)
     if not token:
         return None

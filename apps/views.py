@@ -89,7 +89,7 @@ def change_psw(request):
         return dict(code=1, msg='psw_old error.', value=[])
     users[0].psw = psw_new_1
     users[0].save()
-    return dict(code=code, msg=msg, value=[])
+    return dict(code=code, msg=msg, value=[get_dict_from_model(users[0])])
     
 
 @csrf_exempt
@@ -223,6 +223,10 @@ def get_farm_list(request):
                 farmlist.append(tl.plantrecord.farm)
             if len(farmlist) >= 4:
                 break
+        if not farmlist:
+            prs = PlantRecord.objects.filter(finished=False).order_by('-id')
+            if prs:
+                farmlist.append(prs[0].farm)
         farm_admire = [get_dict_from_model(obj) for obj in farmlist]
     return dict(code=code, msg=msg, value=[farm_self, farm_admire, farm_rdm])
 
@@ -420,5 +424,5 @@ def recharge(request):
     # add history
     ch = ChargeHistory(uid=uid, num=charge)
     ch.save()
-    return dict(code=code, msg=msg, value=[])
+    return dict(code=code, msg=msg, value=[get_dict_from_model(us[0])])
     

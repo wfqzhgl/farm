@@ -85,7 +85,7 @@ class OperationCost(models.Model):
         verbose_name = "OperationCost"
         verbose_name_plural = "OperationCost MAG"
     def __unicode__(self):
-        return self.uid
+        return '%s:%s' % (self.type, self.consume)
     
            
 class OperationInfo(models.Model):

@@ -51,3 +51,6 @@ class ChargeHistoryAdmin(admin.ModelAdmin):
     pass
 admin.site.register(ChargeHistory, ChargeHistoryAdmin)
 
+class OperationCostAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(OperationCost, OperationCostAdmin)
