@@ -63,11 +63,14 @@ def get_dict_from_model(Obj):
     if isinstance(Obj, FarmInfo):
         rs = PlantRecord.objects.filter(farm=Obj, finished=False)
         if rs:
-            val['owner'] = get_dict_from_model(rs[0].owner)
-            val['plant'] = get_dict_from_model(rs[0].plant)
+            if rs[0].owner:
+                val['owner'] = get_dict_from_model(rs[0].owner)
+            if rs[0].plant:
+                val['plant'] = get_dict_from_model(rs[0].plant)
         pics = []
         for pic in Obj.pics.all():
-            pics.append(settings.MEDIA_URL + os.path.basename(pic.url))
+#             pics.append(settings.MEDIA_URL + os.path.basename(pic.url))
+            pics.append(settings.MEDIA_URL + pic.url.strip('media'))
         val['pics'] = pics
         
     return val

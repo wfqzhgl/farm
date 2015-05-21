@@ -295,7 +295,7 @@ def get_plant_for_farm(request):
 def apply_for_farm(request):
     """土地具体操作
         fid     farm id
-        type    操作类型: PLANT, WEED, WATERING, DEBUG, PICK, EMOVE, OTHER
+        type    操作类型: PLANT, WEED, WATERING, DEBUG, PICK, REMOVE, OTHER
         appdix     不同操作类型所需不同参数
         PLANT 时需要参数；appdix 的值为plant id
     """
@@ -306,12 +306,16 @@ def apply_for_farm(request):
     appdix = request.REQUEST.get('appdix')
     
     # get cost
-    consume = request.REQUEST.get('consume', '0.0')
+    consume = 0.0
     ocs = OperationCost.objects.filter(type=type)
     if ocs:
         consume = ocs[0].consume
-    
     userdict = get_userdict_from_token(request)
+    try:
+        userinfo = UserInfo.objects.get(uid=userdict['uid'])
+    except Exception, e:
+        code = 1
+        return dict(code=1, msg='no user error', value=[])
     today = datetime.now().date()
     plantrecord = None
     if type == 'PLANT':
@@ -322,9 +326,16 @@ def apply_for_farm(request):
         plantrecord = PlantRecord(owner_id=userdict['id'],
                                   farm_id=fid, plant_id=plant_id, begin=today)
         plantrecord.save()
+    elif type == 'REMOVE':
+        prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
+        prs.update(finished=True)
     op = OperationInfo(farm_id=fid, plantrecord=plantrecord, name=type, type=type,
                        date=today, operator_id=userdict['id'], consume=consume)
     op.save()
+    # subtract consume
+    if consume > 0.0:
+        userinfo.balance = userinfo.balance - consume;
+        userinfo.save()
     return dict(code=code, msg=msg, value=[])
 
 @csrf_exempt
