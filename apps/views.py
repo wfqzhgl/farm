@@ -150,12 +150,14 @@ def get_time_line(request):
     """土地时间轴"""
     code = 0
     msg = 'OK'
-    uid = request.REQUEST.get('uid')
+#     uid = request.REQUEST.get('uid')
     fid = request.REQUEST.get('fid')
     page = request.REQUEST.get('page', 0)
-    if not uid or not fid:
+    farms = FarmInfo.objects.filter(id=fid)
+    if  not fid or not farms:
         return dict(code=1, msg='error', value=[])
-    prs = PlantRecord.objects.filter(owner__uid=uid, farm__id=fid, finished=False)
+#     prs = PlantRecord.objects.filter(owner__uid=uid, farm__id=fid, finished=False)
+    prs = PlantRecord.objects.filter(farm__id=fid, finished=False)
     if not prs:
         return dict(code=1, msg='no timeline', value=[])
     prs = prs[0]
@@ -163,7 +165,7 @@ def get_time_line(request):
     objs = get_page_obj(request, tls, settings.ROWS_DEFAULT)
     res = [get_dict_from_model(obj) for obj in objs]
     havest = [] if not prs.havest else prs.havest.split(',')
-    return dict(code=code, msg=msg, value=[res, havest])
+    return dict(code=code, msg=msg, value=[res, havest, get_dict_from_model(farms[0])])
 
 @csrf_exempt
 @render_to_json
@@ -257,7 +259,8 @@ def get_free_farm_list(request):
     msg = 'OK'
     fids = PlantRecord.objects.filter(finished=False).values_list('farm_id', flat=True)
     fis = FarmInfo.objects.exclude(id__in=fids)
-    farm_list = [get_dict_from_model(obj) for obj in fis]
+    objs = get_page_obj(request, fis, settings.ROWS_DEFAULT)
+    farm_list = [get_dict_from_model(obj) for obj in objs]
     return dict(code=code, msg=msg, value=farm_list)
 
 @csrf_exempt
@@ -351,10 +354,37 @@ def get_comments_of_timeline(request):
 @render_to_json
 @login_check
 def edit_comment(request):
-    """图片评论编辑"""
+    """图片评论编辑
+        tid     timeline id
+        type 操作类型：DEL, ADD, EDIT
+        cid comment id
+        mes 操作所需参数，如DEL则不需参数
+    """
     code = 0
     msg = 'OK'
-    pass
+    tid = request.REQUEST.get('tid')
+    ctype = request.REQUEST.get('type')
+    mes = request.REQUEST.get('mes')
+    cid = request.REQUEST.get('cid')
+    if not type or not tid:
+        return dict(code=1, msg='para error.', value=[])
+    udict = get_userdict_from_token(request)
+    if ctype == 'ADD':
+        co = Comment(user_id=udict['id'], desc=mes)
+        co.save()
+        ti = TimelineInfo.objects.get(id=tid)
+        ti.comments.add(co)
+    elif ctype == 'EDIT':
+        cos = Comment.objects.filter(id=cid)
+        if cos:
+            cos[0].desc = mes
+            cos[0].save()
+    elif ctype == 'DEL':
+        cos = Comment.objects.filter(id=cid)
+        if cos:
+            cos[0].deleted = True
+            cos[0].save()
+    return dict(code=code, msg=msg, value=[])
 
 
 @csrf_exempt
@@ -371,10 +401,26 @@ def search(request):
 @render_to_json
 @login_check
 def upload_time_line(request):
-    """图片上传"""
+    """图片上传
+        fid 此图片对应的farm id
+        pic
+        msg 针对图片的描述
+    """
     code = 0
     msg = 'OK'
-    pass
+    fid = request.REQUEST.get('fid')
+    pic = request.REQUEST.get('pic')
+    appendix = request.REQUEST.get('msg')
+    udict = get_userdict_from_token(request)
+    today = datetime.now().date()
+    prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
+    if not prs:
+        return dict(code=1, msg='no plantrecord.', value=[])
+    tl = TimelineInfo(plantrecord=prs[0], pic=pic, date=today, 
+                      poster_id=udict['id'], appendix=appendix)
+    tl.save()
+    return dict(code=code, msg=msg, value=[])
+    
 
 @csrf_exempt
 @render_to_json

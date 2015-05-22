@@ -3,6 +3,7 @@
 
 from django.db import models
 import uuid
+from celery.worker.strategy import default
 
 
 class LoginInfo(models.Model):
@@ -229,6 +230,7 @@ class Comment(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey("UserInfo", verbose_name="uid", blank=True, null=True)
     desc = models.CharField("desc", max_length=200)
+    deleted = models.BooleanField('deleted', default=False)
     created = models.DateTimeField("创建时间", auto_now_add=True)
     class Meta:
 #         unique_together = (("brand", "province"),)

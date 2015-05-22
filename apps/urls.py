@@ -30,4 +30,7 @@ urlpatterns = patterns('apps.views',
                         
                         url(r'^recharge[/]?$', "recharge", name='recharge'),
                         url(r'^apply[/]?$', "apply_for_farm", name='apply_for_farm'),
+                        
+                        url(r'^pic_commens_edit[/]?$', "edit_comment", name='edit_comment'),
+                        
                        )
