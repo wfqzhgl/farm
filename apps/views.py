@@ -325,10 +325,16 @@ def apply_for_farm(request):
         plant_id = appdix
         prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
         if prs:
-            return dict(code=1, msg='The farm not free.', value=[])
-        plantrecord = PlantRecord(owner_id=userdict['id'],
-                                  farm_id=fid, plant_id=plant_id, begin=today)
-        plantrecord.save()
+            if prs[0].plant:
+                return dict(code=1, msg='The farm not free.', value=[])
+            else:
+                prs[0].plant_id=plant_id
+                prs[0].save()
+                
+        else:
+            plantrecord = PlantRecord(owner_id=userdict['id'],
+                                      farm_id=fid, plant_id=plant_id, begin=today)
+            plantrecord.save()
     elif type == 'REMOVE':
         prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
         prs.update(finished=True)

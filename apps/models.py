@@ -3,7 +3,7 @@
 
 from django.db import models
 import uuid
-from celery.worker.strategy import default
+# from celery.worker.strategy import default
 
 
 class LoginInfo(models.Model):
@@ -171,7 +171,7 @@ class PlantRecord(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
     farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
-    plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id")
+    plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id", blank=True, null=True)
     begin = models.DateField('date')
     end = models.DateField('date', blank=True, null=True)
     havest = models.CharField("havest", max_length=600, blank=True, null=True)
