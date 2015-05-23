@@ -200,7 +200,7 @@ def get_farm_list(request):
     farm_rdm = []
     if uid:
         farmlist = []
-        for pr in PlantRecord.objects.filter(owner__uid=uid).order_by('-created'):
+        for pr in RentRecord.objects.filter(owner__uid=uid, finished=False).order_by('-created'):
             if pr.farm not in farmlist:
                 farmlist.append(pr.farm)
         if farmlist:
@@ -280,7 +280,7 @@ def get_free_farm_list(request):
     """获取尚未租种的土地列表"""
     code = 0
     msg = 'OK'
-    fids = PlantRecord.objects.filter(finished=False).values_list('farm_id', flat=True)
+    fids = RentRecord.objects.filter(finished=False).values_list('farm_id', flat=True)
     fis = FarmInfo.objects.exclude(id__in=fids)
     objs = get_page_obj(request, fis, settings.ROWS_DEFAULT)
     farm_list = [get_dict_from_model(obj) for obj in objs]
