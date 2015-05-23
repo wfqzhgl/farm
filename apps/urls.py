@@ -24,13 +24,18 @@ urlpatterns = patterns('apps.views',
                         
                         url(r'^user_info[/]?$', "get_user_info", name='get_user_info'),
                         url(r'^modify[/]?$', "modify_user_info", name='modify_user_info'),
+                        url(r'^buddy_follow[/]?$', "buddy_follow", name='buddy_follow'),
+                        url(r'^customer_buddy_list[/]?$', "get_buddy_list", name='get_buddy_list'),
                         
                         url(r'^free_farm_list[/]?$', "get_free_farm_list", name='get_free_farm_list'),
                         url(r'^plant_for_farm[/]?$', "get_plant_for_farm", name='get_plant_for_farm'),
                         
                         url(r'^recharge[/]?$', "recharge", name='recharge'),
                         url(r'^apply[/]?$', "apply_for_farm", name='apply_for_farm'),
+                        url(r'^consum_history[/]?$', "get_op_history", name='get_op_history'),
+                        url(r'^rent[/]?$', "rent_for_farm", name='rent_for_farm'),
                         
                         url(r'^pic_commens_edit[/]?$', "edit_comment", name='edit_comment'),
+                        url(r'^pic_commens_get[/]?$', "get_comments_of_timeline", name='get_comments_of_timeline'),
                         
                        )

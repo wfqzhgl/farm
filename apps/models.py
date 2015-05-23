@@ -58,6 +58,7 @@ class UserInfo(models.Model):
     self_desc = models.CharField("self_desc", max_length=128, blank=True, null=True)
     appendix = models.CharField("appendix", max_length=64, blank=True, null=True)
     balance = models.FloatField("balance", default=0.0, blank=True, null=True)
+    buddys = models.ManyToManyField("UserInfo", verbose_name="buddys", blank=True, null=True)
     created = models.DateTimeField("创建时间", auto_now_add=True)
     class Meta:
 #         unique_together = (("brand", "province"),)
@@ -165,6 +166,22 @@ class TimelineInfo(models.Model):
         verbose_name = "TimelineInfo"
         verbose_name_plural = "TimelineInfo MAG"
 
+class RentRecord(models.Model):
+    """租用土地记录
+    """
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
+    farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
+    begin = models.DateField('begin')
+    end = models.DateField('end', blank=True, null=True)
+    finished = models.BooleanField('finished', default=False)
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+    class Meta:
+#         unique_together = (("brand", "province"),)
+        verbose_name = "RentRecord"
+        verbose_name_plural = "RentRecord MAG"
+        
+        
 class PlantRecord(models.Model):
     """种植记录
     """
@@ -172,8 +189,8 @@ class PlantRecord(models.Model):
     owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
     farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
     plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id", blank=True, null=True)
-    begin = models.DateField('date')
-    end = models.DateField('date', blank=True, null=True)
+    begin = models.DateField('begin')
+    end = models.DateField('end', blank=True, null=True)
     havest = models.CharField("havest", max_length=600, blank=True, null=True)
     finished = models.BooleanField('finished', default=False)
     created = models.DateTimeField("创建时间", auto_now_add=True)

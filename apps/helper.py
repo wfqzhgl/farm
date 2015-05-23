@@ -33,14 +33,14 @@ def log_in_token(token, user_dict):
     if not settings.REDIS_CLIENT.hexists(settings.HASHKEY_APPS_USER_TOKEN, token):
         settings.REDIS_CLIENT.hset(settings.HASHKEY_APPS_USER_TOKEN, token, json.dumps(user_dict))
 
-def get_userdict_from_token(request,header_name="HTTP_VEGSESSION"):
+def get_userdict_from_token(request, header_name="HTTP_VEGSESSION"):
     token = request.META.get(header_name)
     if not token:
         return None
     u = settings.REDIS_CLIENT.hget(settings.HASHKEY_APPS_USER_TOKEN, token)
     try:
         return json.loads(u)
-    except Exception,e:
+    except Exception, e:
         logger.error(str(e))
         return None
     
@@ -61,12 +61,14 @@ def get_dict_from_model(Obj):
             comments.append(oo_dic)
         val['comments'] = comments
     if isinstance(Obj, FarmInfo):
-        rs = PlantRecord.objects.filter(farm=Obj, finished=False)
-        if rs:
-            if rs[0].owner:
-                val['owner'] = get_dict_from_model(rs[0].owner)
-            if rs[0].plant:
-                val['plant'] = get_dict_from_model(rs[0].plant)
+        rrs = RentRecord.objects.filter(farm=Obj, finished=False)
+        prs = PlantRecord.objects.filter(farm=Obj, finished=False)
+        if rrs:
+            if rrs[0].owner:
+                val['owner'] = get_dict_from_model(rrs[0].owner)
+        if prs:
+            if prs[0].plant:
+                val['plant'] = get_dict_from_model(prs[0].plant)
         pics = []
         for pic in Obj.pics.all():
 #             pics.append(settings.MEDIA_URL + os.path.basename(pic.url))

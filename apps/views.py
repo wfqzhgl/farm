@@ -159,7 +159,7 @@ def get_time_line(request):
 #     prs = PlantRecord.objects.filter(owner__uid=uid, farm__id=fid, finished=False)
     prs = PlantRecord.objects.filter(farm__id=fid, finished=False)
     if not prs:
-        return dict(code=1, msg='no timeline', value=[])
+        return dict(code=0, msg='no timeline', value=[[], [], get_dict_from_model(farms[0])])
     prs = prs[0]
     tls = TimelineInfo.objects.filter(plantrecord=prs).order_by('-created')
     objs = get_page_obj(request, tls, settings.ROWS_DEFAULT)
@@ -239,16 +239,39 @@ def get_buddy_list(request):
     """获取用户好友列表"""
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    userdict = get_userdict_from_token(request)
+    thisuid = uid if uid else userdict['uid']
+    users = UserInfo.objects.filter(uid=thisuid)
+    if not users:
+        return dict(code=1, msg='user not exists.', value=[])
+    res = [get_dict_from_model(obj) for obj in users[0].buddys.all()]
+    return dict(code=code, msg=msg, value=res)
 
 @csrf_exempt
 @render_to_json
 @login_check
 def buddy_follow(request):
-    """添加好友"""
+    """添加好友
+        uid      // 需要follow的uid，本身uid通过session获取
+        follow // true, 加好友， false 取消关注
+    """
     code = 0
     msg = 'OK'
-    pass
+    uid = request.REQUEST.get('uid')
+    follow = request.REQUEST.get('follow')
+    userdict = get_userdict_from_token(request)
+    user = UserInfo.objects.get(id=userdict['id'])
+    buddys = UserInfo.objects.filter(uid=uid)
+    if uid == userdict['uid'] or not buddys:
+        return dict(code=1, msg='uid error', value=[])
+    if follow == 'true':
+        user.buddys.add(buddys[0])
+    elif follow == 'false':
+        user.buddys.remove(buddys[0])
+    else:
+        return dict(code=1, msg='follow error', value=[])
+    return dict(code=code, msg=msg, value=[])
 
 @csrf_exempt
 @render_to_json
@@ -270,7 +293,11 @@ def get_op_history(request):
     """获取操作记录"""
     code = 0
     msg = 'OK'
-    pass
+    userdict = get_userdict_from_token(request)
+    ops = OperationInfo.objects.filter(operator_id=userdict['id']).order_by('-created')
+    objs = get_page_obj(request, ops, settings.ROWS_DEFAULT)
+    return dict(code=code, msg=msg, value=[get_dict_from_model(obj) for obj in objs])
+    
 
 @csrf_exempt
 @render_to_json
@@ -291,6 +318,27 @@ def get_plant_for_farm(request):
         code = 1
         return dict(code=1, msg='fid error', value=[])
     return dict(code=code, msg=msg, value=plants)
+
+@csrf_exempt
+@render_to_json
+@login_check
+def rent_for_farm(request):
+    """租用土地
+    """
+    code = 0
+    msg = 'OK'
+    fid = request.REQUEST.get('fid')
+    if not fid:
+        return dict(code=1, msg='no fid error', value=[])
+    userdict = get_userdict_from_token(request)
+    rrs = RentRecord.objects.filter(farm_id=fid, finished=False)
+    if not rrs:
+        return dict(code=1, msg='The farm not free.', value=[])
+    today = datetime.now().date()
+    rr = RentRecord(owner_id=userdict['id'], farm_id=fid, begin=today)
+    rr.save()
+    return dict(code=code, msg=msg, value=[])
+
 
 @csrf_exempt
 @render_to_json
@@ -323,12 +371,15 @@ def apply_for_farm(request):
     plantrecord = None
     if type == 'PLANT':
         plant_id = appdix
+        rrs = RentRecord.objects.filter(owner_id=userdict['id'], farm_id=fid, finished=False)
+        if not rrs:
+            return dict(code=1, msg='The farm not yours.', value=[])
         prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
         if prs:
             if prs[0].plant:
                 return dict(code=1, msg='The farm not free.', value=[])
             else:
-                prs[0].plant_id=plant_id
+                prs[0].plant_id = plant_id
                 prs[0].save()
                 
         else:
@@ -354,7 +405,14 @@ def get_comments_of_timeline(request):
     """获取图片评论信息"""
     code = 0
     msg = 'OK'
-    pass
+    tid = request.REQUEST.get('tid')
+    if not tid:
+        return dict(code=1, msg='no tid', value=[])
+    tis = TimelineInfo.objects.filter(id=tid)
+    if not tis:
+        return dict(code=1, msg='tid error.', value=[])
+    res = [get_dict_from_model(obj) for obj in tis[0].comments.all()]
+    return dict(code=code, msg=msg, value=res)
 
 @csrf_exempt
 @render_to_json
@@ -422,7 +480,7 @@ def upload_time_line(request):
     prs = PlantRecord.objects.filter(farm_id=fid, finished=False)
     if not prs:
         return dict(code=1, msg='no plantrecord.', value=[])
-    tl = TimelineInfo(plantrecord=prs[0], pic=pic, date=today, 
+    tl = TimelineInfo(plantrecord=prs[0], pic=pic, date=today,
                       poster_id=udict['id'], appendix=appendix)
     tl.save()
     return dict(code=code, msg=msg, value=[])
