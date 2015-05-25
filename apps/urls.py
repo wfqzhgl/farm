@@ -18,6 +18,7 @@ urlpatterns = patterns('apps.views',
                         
                         url(r'^rdm_cus[/]?$', "rdm_user_info", name='rdm_user_info'),
                         url(r'^time_line[/]?$', "get_time_line", name='get_time_line'),
+                        url(r'^pic_praise[/]?$', "pic_praise", name='pic_praise'),
                         
                         url(r'^farm_info[/]?$', "get_farm_info", name='get_farm_info'),
                         url(r'^farm_list[/]?$', "get_farm_list", name='get_farm_list'),

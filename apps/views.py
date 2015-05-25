@@ -167,6 +167,27 @@ def get_time_line(request):
     havest = [] if not prs.havest else prs.havest.split(',')
     return dict(code=code, msg=msg, value=[res, havest, get_dict_from_model(farms[0])])
 
+
+@csrf_exempt
+@render_to_json
+@login_check
+def pic_praise(request):
+    """
+        参数： 
+        tid     timeline id
+        fid 土地id
+    """
+    code = 0
+    msg = 'OK'
+    tid = request.REQUEST.get('tid')
+    fid = request.REQUEST.get('fid')
+    tls = TimelineInfo.objects.filter(id=tid)
+    if not tls:
+        return dict(code=1, msg='no timeline.', value=[])
+    tls[0].admire = tls[0].admire + 1
+    tls[0].save()
+    return dict(code=code, msg=msg, value=[])
+
 @csrf_exempt
 @render_to_json
 @login_check
