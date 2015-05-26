@@ -35,6 +35,7 @@ urlpatterns = patterns('apps.views',
                         url(r'^apply[/]?$', "apply_for_farm", name='apply_for_farm'),
                         url(r'^consum_history[/]?$', "get_op_history", name='get_op_history'),
                         url(r'^rent[/]?$', "rent_for_farm", name='rent_for_farm'),
+                        url(r'^unrent[/]?$', "unrent_for_farm", name='unrent_for_farm'),
                         
                         url(r'^pic_commens_edit[/]?$', "edit_comment", name='edit_comment'),
                         url(r'^pic_commens_get[/]?$', "get_comments_of_timeline", name='get_comments_of_timeline'),

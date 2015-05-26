@@ -340,6 +340,29 @@ def get_plant_for_farm(request):
         return dict(code=1, msg='fid error', value=[])
     return dict(code=code, msg=msg, value=plants)
 
+
+@csrf_exempt
+@render_to_json
+@login_check
+def unrent_for_farm(request):
+    """unrent
+    """
+    code = 0
+    msg = 'OK'
+    fid = request.REQUEST.get('fid')
+    if not fid:
+        return dict(code=1, msg='no fid error', value=[])
+    userdict = get_userdict_from_token(request)
+    rrs = RentRecord.objects.filter(farm_id=fid, owner_id=userdict['id'], finished=False)
+    if not rrs:
+        return dict(code=1, msg='The farm not owned.', value=[])
+    today = datetime.now().date()
+    rrs[0].finished = True
+    rrs[0].end = today
+    rrs[0].save()
+    return dict(code=code, msg=msg, value=[])
+
+    
 @csrf_exempt
 @render_to_json
 @login_check
@@ -353,7 +376,7 @@ def rent_for_farm(request):
         return dict(code=1, msg='no fid error', value=[])
     userdict = get_userdict_from_token(request)
     rrs = RentRecord.objects.filter(farm_id=fid, finished=False)
-    if not rrs:
+    if rrs:
         return dict(code=1, msg='The farm not free.', value=[])
     today = datetime.now().date()
     rr = RentRecord(owner_id=userdict['id'], farm_id=fid, begin=today)
