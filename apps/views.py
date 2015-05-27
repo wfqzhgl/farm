@@ -318,7 +318,17 @@ def get_op_history(request):
     ops = OperationInfo.objects.filter(operator_id=userdict['id']).order_by('-created')
     objs = get_page_obj(request, ops, settings.ROWS_DEFAULT)
     return dict(code=code, msg=msg, value=[get_dict_from_model(obj) for obj in objs])
-    
+
+@csrf_exempt
+@render_to_json
+@login_check
+def get_comsume_history(request):
+    code = 0
+    msg = 'OK'
+    userdict = get_userdict_from_token(request)
+    ops = ConsumeRecord.objects.filter(user_id=userdict['id']).order_by('-created')
+    objs = get_page_obj(request, ops, settings.ROWS_DEFAULT)
+    return dict(code=code, msg=msg, value=[get_dict_from_model(obj) for obj in objs]) 
 
 @csrf_exempt
 @render_to_json
@@ -436,6 +446,10 @@ def apply_for_farm(request):
     op = OperationInfo(farm_id=fid, plantrecord=plantrecord, name=type, type=type,
                        date=today, operator_id=userdict['id'], consume=consume)
     op.save()
+    # add consume record
+    cr = ConsumeRecord(user_id=userdict['id'], type=type, cid=op.id, consume=consume)
+    cr.save()
+    
     # subtract consume
     if consume > 0.0:
         userinfo.balance = userinfo.balance - consume;
@@ -589,5 +603,8 @@ def recharge(request):
     # add history
     ch = ChargeHistory(uid=uid, num=charge)
     ch.save()
+    # add consume record
+    cr = ConsumeRecord(user_id=uid, type='RECHARGE', cid=ch.id, consume=ccs[0].count)
+    cr.save()
     return dict(code=code, msg=msg, value=[get_dict_from_model(us[0])])
     

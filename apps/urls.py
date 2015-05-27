@@ -33,7 +33,7 @@ urlpatterns = patterns('apps.views',
                         
                         url(r'^recharge[/]?$', "recharge", name='recharge'),
                         url(r'^apply[/]?$', "apply_for_farm", name='apply_for_farm'),
-                        url(r'^consum_history[/]?$', "get_op_history", name='get_op_history'),
+                        url(r'^consum_history[/]?$', "get_comsume_history", name='get_comsume_history'),
                         url(r'^rent[/]?$', "rent_for_farm", name='rent_for_farm'),
                         url(r'^unrent[/]?$', "unrent_for_farm", name='unrent_for_farm'),
                         

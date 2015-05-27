@@ -5,6 +5,16 @@ from django.db import models
 import uuid
 # from celery.worker.strategy import default
 
+OP_CHOICES = (
+        ('PLANT', u'PLANT'),
+        ('WEED', u'WEED'),
+        ('WATERING', u'WATERING'),
+        ('DEBUG', u'DEBUG'),
+        ('PICK', u'PICK'),
+        ('REMOVE', u'REMOVE'),
+        ('RECHARGE', u'RECHARGE'),
+        ('OTHER', u'OTHER'),
+    )
 
 class LoginInfo(models.Model):
     TYPE_CHOICES = (
@@ -89,19 +99,20 @@ class OperationCost(models.Model):
     def __unicode__(self):
         return '%s:%s' % (self.type, self.consume)
     
-           
+    
+class ConsumeRecord(models.Model):
+    """消费记录
+    """
+    user = models.ForeignKey("UserInfo", verbose_name="user")
+    type = models.CharField("type", choices=OP_CHOICES, max_length=32)
+    cid = models.IntegerField('related id', blank=True, null=True)
+    consume = models.FloatField("consume")
+    created = models.DateTimeField("创建时间", auto_now_add=True)
+    
+
 class OperationInfo(models.Model):
     """PLANT, WEED, WATERING, DEBUG, PICK, EMOVE, OTHER
     """
-    OP_CHOICES = (
-        ('PLANT', u'PLANT'),
-        ('WEED', u'WEED'),
-        ('WATERING', u'WATERING'),
-        ('DEBUG', u'DEBUG'),
-        ('PICK', u'PICK'),
-        ('REMOVE', u'REMOVE'),
-        ('OTHER', u'OTHER'),
-    )
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id", blank=True, null=True)
     plantrecord = models.ForeignKey("PlantRecord", verbose_name="PlantRecord id", blank=True, null=True)
