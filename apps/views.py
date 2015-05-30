@@ -588,14 +588,14 @@ def recharge(request):
     uid = request.REQUEST.get('uid')
     charge = request.REQUEST.get('charge')
     
-    ccs = ChargeCard.objects.filter(num=charge)
+    ccs = ChargeCard.objects.filter(num=charge, invalid=False)
     if not ccs:
         return dict(code=1, msg='card error.', value=[])
     us = UserInfo.objects.filter(uid=uid)
     if not us:
         return dict(code=1, msg='uid error.', value=[])
     # update user
-    us[0].balance = us[0].balance + ccs[0].count
+    us[0].balance = (us[0].balance if us[0].balance else 0) + ccs[0].count
     us[0].save()
     # update card
     ccs[0].invalid = True
@@ -604,7 +604,7 @@ def recharge(request):
     ch = ChargeHistory(uid=uid, num=charge)
     ch.save()
     # add consume record
-    cr = ConsumeRecord(user_id=uid, type='RECHARGE', cid=ch.id, consume=ccs[0].count)
+    cr = ConsumeRecord(user_id=us[0].id, type='RECHARGE', cid=ch.id, consume=ccs[0].count)
     cr.save()
     return dict(code=code, msg=msg, value=[get_dict_from_model(us[0])])
     

@@ -192,7 +192,8 @@ def get_page_obj(request, queryset, perpage=30, tag=None):
     try:
         page_obj = p.page(page)
     except (EmptyPage, InvalidPage):
-        page_obj = p.page(p.num_pages)
+#         page_obj = p.page(p.num_pages)
+        page_obj = []
     return page_obj
 
 

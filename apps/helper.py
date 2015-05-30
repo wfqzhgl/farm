@@ -8,6 +8,7 @@ from django.conf import settings
 import json
 import copy
 import os
+from datetime import datetime
 from models import *
 import logging
 
@@ -48,7 +49,9 @@ def get_userdict_from_token(request, header_name="HTTP_VEGSESSION"):
 def get_dict_from_model(Obj):
     val = copy.copy(Obj.__dict__)
     del val['_state']
+    created = None
     if hasattr(Obj, 'created'):
+        created = Obj.created.strftime('%Y-%m-%d %H:%M:%S')
         del val['created']
     if hasattr(Obj, 'psw'):
         del val['psw']
@@ -74,5 +77,7 @@ def get_dict_from_model(Obj):
 #             pics.append(settings.MEDIA_URL + os.path.basename(pic.url))
             pics.append(settings.MEDIA_URL + pic.url.strip('media'))
         val['pics'] = pics
+    elif isinstance(Obj, ConsumeRecord) and created:
+        val['created'] = created
         
     return val
