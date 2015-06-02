@@ -208,7 +208,7 @@ class PlantRecord(models.Model):
         verbose_name = "PlantRecord"
         verbose_name_plural = "PlantRecord MAG"
     def __unicode__(self):
-        return self.rentrecord.farm.name + ':' + (self.plant if self.plant else 'None')
+        return self.rentrecord.farm.name + ':' + (self.plant.name if self.plant else 'None')
 
 # class Havest(models.Model):
 # #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

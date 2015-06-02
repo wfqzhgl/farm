@@ -161,7 +161,7 @@ def get_time_line(request):
     if not prs:
         return dict(code=0, msg='no timeline', value=[[], [], get_dict_from_model(farms[0])])
     prs = prs[0]
-    tls = TimelineInfo.objects.filter(plantrecord=prs).order_by('-created')
+    tls = TimelineInfo.objects.filter(plantrecord=prs).order_by('-date')
     objs = get_page_obj(request, tls, settings.ROWS_DEFAULT)
     res = [get_dict_from_model(obj) for obj in objs]
     havest = [] if not prs.havest else prs.havest.split(',')
@@ -345,6 +345,9 @@ def get_plant_for_farm(request):
         farm = FarmInfo.objects.get(id=fid)
         for plt in farm.plants.all():
             plants.append(get_dict_from_model(plt))
+        if not plants:
+            for plt in PlantInfo.objects.all():
+                plants.append(get_dict_from_model(plt))
     except Exception, e:
         code = 1
         return dict(code=1, msg='fid error', value=[])
@@ -428,7 +431,7 @@ def apply_for_farm(request):
         rrs = RentRecord.objects.filter(owner_id=userdict['id'], farm_id=fid, finished=False)
         if not rrs:
             return dict(code=1, msg='The farm not yours.', value=[])
-        prs = PlantRecord.objects.filter(rentrecord__farm_id=fid, finished=False)
+        prs = PlantRecord.objects.filter(rentrecord__farm__id=fid, finished=False)
         if prs:
             if prs[0].plant:
                 return dict(code=1, msg='The farm not free.', value=[])
@@ -437,11 +440,10 @@ def apply_for_farm(request):
                 prs[0].save()
                 
         else:
-            plantrecord = PlantRecord(rentrecord__owner_id=userdict['id'],
-                                      rentrecord__farm_id=fid, plant_id=plant_id, begin=today)
+            plantrecord = PlantRecord(rentrecord=rrs[0], plant_id=plant_id, begin=today)
             plantrecord.save()
     elif type == 'REMOVE':
-        prs = PlantRecord.objects.filter(rentrecord__farm_id=fid, finished=False)
+        prs = PlantRecord.objects.filter(rentrecord__farm__id=fid, finished=False)
         prs.update(finished=True)
     op = OperationInfo(farm_id=fid, plantrecord=plantrecord, name=type, type=type,
                        date=today, operator_id=userdict['id'], consume=consume)
@@ -535,7 +537,7 @@ def upload_time_line(request):
     appendix = request.REQUEST.get('msg')
     udict = get_userdict_from_token(request)
     today = datetime.now().date()
-    prs = PlantRecord.objects.filter(rentrecord__farm_id=fid, finished=False)
+    prs = PlantRecord.objects.filter(rentrecord__farm__id=fid, finished=False)
     if not prs:
         return dict(code=1, msg='no plantrecord.', value=[])
     tl = TimelineInfo(plantrecord=prs[0], pic=pic, date=today,

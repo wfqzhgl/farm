@@ -65,7 +65,7 @@ def get_dict_from_model(Obj):
         val['comments'] = comments
     if isinstance(Obj, FarmInfo):
         rrs = RentRecord.objects.filter(farm=Obj, finished=False)
-        prs = PlantRecord.objects.filter(farm=Obj, finished=False)
+        prs = PlantRecord.objects.filter(rentrecord__farm=Obj, finished=False)
         if rrs:
             if rrs[0].owner:
                 val['owner'] = get_dict_from_model(rrs[0].owner)
@@ -81,3 +81,15 @@ def get_dict_from_model(Obj):
         val['created'] = created
         
     return val
+
+def update_farm_cost():
+    daily_cost = settings.FARM_DAILY_COST
+    for rs in RentRecord.objects.filter(finished=False):
+        if not rs.owner or rs.owner.balance <= 0:
+            logger.debug('RentRecord ignore,id=%s' % rs.id)
+            continue
+        rs.owner.balance = rs.owner.balance - daily_cost
+        rs.owner.save()
+        logger.debug('RentRecord daily cost,uid=%s,fid=%s,cost=%s' % (rs.owner.uid, rs.farm.id, daily_cost))
+    
+    
