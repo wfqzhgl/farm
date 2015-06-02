@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-__author__ = 'wufaqing'
+__author__ = 'pure'
 
 LOGGING = {
     'version': 1,

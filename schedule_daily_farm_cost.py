@@ -12,10 +12,9 @@ import re
 import sys
 import fileinput
 from datetime import datetime, timedelta, date
-from Crypto.Cipher import AES
 import struct
 
-def update_farm_cost():
+def farm_cost():
     """update user's balance for each farm who owned.
     """
     logger.debug('update_farm_cost: begin...')
@@ -33,8 +32,8 @@ if __name__ == "__main__":
     from django.conf import settings
     import logging
     from apps.helper import update_farm_cost
-
     logger = logging.getLogger("apps")
+    farm_cost()
         
 
 
