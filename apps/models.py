@@ -180,8 +180,7 @@ class TimelineInfo(models.Model):
 class RentRecord(models.Model):
     """租用土地记录
     """
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
+    owner = models.ForeignKey("UserInfo", verbose_name="UserInfo", blank=True, null=True)
     farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
     begin = models.DateField('begin')
     end = models.DateField('end', blank=True, null=True)
@@ -196,9 +195,7 @@ class RentRecord(models.Model):
 class PlantRecord(models.Model):
     """种植记录
     """
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey("UserInfo", verbose_name="UserInfo")
-    farm = models.ForeignKey("FarmInfo", verbose_name="FarmInfo id")
+    rentrecord = models.ForeignKey("RentRecord", verbose_name="RentRecord")
     plant = models.ForeignKey("PlantInfo", verbose_name="PlantInfo id", blank=True, null=True)
     begin = models.DateField('begin')
     end = models.DateField('end', blank=True, null=True)
@@ -210,7 +207,8 @@ class PlantRecord(models.Model):
 #         unique_together = (("brand", "province"),)
         verbose_name = "PlantRecord"
         verbose_name_plural = "PlantRecord MAG"
-
+    def __unicode__(self):
+        return self.rentrecord.farm.name + ':' + (self.plant if self.plant else 'None')
 
 # class Havest(models.Model):
 # #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
