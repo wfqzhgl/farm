@@ -13,4 +13,3 @@ logs/passport.log
 sftp-config.json
 ./static/admin/*
 .idea/*
-media

@@ -548,7 +548,7 @@ def upload_time_line(request):
 
 @csrf_exempt
 @render_to_json
-@login_check
+# @login_check
 def upload(request):
     fm = PicForm(request.POST, request.FILES)
     code = 0

@@ -1,0 +1,112 @@
+/*
+	2013/10/10
+	zhicai.wang
+*/
+/* CSS Document */
+.wrapper .header-box:after, .header-box .nav ul:after, .products-box .download-box ul:after,
+.features-list-box ul:after { content:"\20";display: block;height: 0;visibility: hidden;clear: both;}
+.wrapper .header-box, .header-box .nav ul, .products-box .download-box ul,
+.features-list-box ul { zoom:1; position:relative;}
+.header-box h1, .features-list-box li i, .products-box .pop-info-box .icon-tri-up { display: inline-block; *display: inline; overflow: hidden; zoom: 1; vertical-align: middle;}
+ 
+.header-box h1, .products-box .txt .tit, .products-box .btn-iphone, .products-box .btn-android, .products-box .download-box .btn-download,
+.icon-search, .icon-deal, .icon-sale, .icon-shop, .icon-map, .icon-rank,
+.products-box .slide-nav li, .ipad-box .download-ipad .btn-ipad, .products-box .pop-info-box .icon-tri-up, .wap-box .txt-c .input-box { background-image: url(i/sprite.png); background-repeat: no-repeat;}
+ 
+.wrapper { background-image: url(i/bg.png); background-repeat: repeat-x; }
+.wrapper-inner { width: 960px; margin: 0 auto;}
+
+/*header-box*/
+.header-box { position: relative; width: 960px; height: 55px; margin: 0 auto; padding-top: 23px; overflow: hidden; }
+.header-box h1 { float: left; width: 240px; height: 40px; text-indent: -9999px; overflow: hidden;}
+.header-box .nav { position: absolute; top: 33px; right: 0; _width: 690px; _overflow: hidden; }
+.header-box .nav ul { right: -1px; _right: -15px;}
+.header-box .nav li { float: left; border-right: 1px dashed #e2e2e2;}
+.header-box .nav a { display: block; margin: 0 25px; font-size: 18px; font-family: "Microsoft YaHei"; color: #555555;}
+.header-box .nav a:hover, .header-box .nav .cur a { color: #ff8400;}     
+
+/*products-box*/
+.wrapper .products-box { height: 550px; padding: 0 50px 0 460px;}
+.products-box .txt { float: left; width: 410px; margin-left: -410px; _margin-left: -205px; padding-top: 55px;}
+.products-box .txt .tit { height: 80px; background-position: 10px -50px; text-indent: -9999px; overflow: hidden;}
+.products-box .download-box { width: 390px; padding: 10px 0 10px 10px; border-bottom: 1px dashed #d6d6d6;}
+.products-box .download-box li { position: relative; float: left; padding: 0 12px 15px 0; }
+.products-box .download-box .btn-download { display: block; position: relative;  width: 116px; height: 37px; background-position: 0 -290px; text-align: center; line-height: 37px; font-size: 14px; font-weight: bold; z-index: 90;}
+.products-box .download-box .btn-download:hover { background-position: -150px -290px;}
+.products-box .download-box .btn-download:active { background-position: -270px -290px;}
+.products-box .download-box .btn-iphone, .products-box .download-box .btn-android { width: 180px; height: 51px; text-indent: -9999px; overflow: hidden;}
+.products-box .download-box .btn-iphone { background-position: 0 -230px;}
+.products-box .download-box .btn-iphone:hover{ background-position: 0 -450px;}
+.products-box .download-box .btn-iphone:active{ background-position: -190px -450px;}
+.products-box .download-box .btn-android { background-position: -190px -230px;}
+.products-box .download-box .btn-android:hover{ background-position: 0 -510px;}
+.products-box .download-box .btn-android:active{ background-position: -190px -510px;}
+.products-box .download-box .pop-info-box { position: absolute; left: 0; z-index: 99; border: 1px solid #bbbbbb; background-color: #ffffff; box-shadow: 0px 0px 3px rgba(0,0,0,0.2);}
+.products-box .pop-info-box p { padding: 0 0 10px 50px; line-height: 20px; color: #555555; word-wrap: break-word; word-break: break-all;}
+.products-box .pop-info-box em { float: left; margin-left: -50px}
+.products-box .pop-info-box a { color: #ff8400;}
+.products-box .pop-info-box img { margin: 0 0 5px 10px; padding: 1px; border: 1px solid #afafaf; *display: inline; overflow: hidden; zoom: 1; vertical-align: top;}
+.products-box .pop-info-box .con { position: relative;}
+.products-box .pop-info-box .icon-tri-up { position: absolute; width: 13px; height: 7px; background-position: -130px -290px;}
+.products-box .iphone .pop-info-box { top: 56px; left: 2px; width: 328px; padding: 20px 20px 15px;}
+.products-box .iphone .pop-info-box .icon-tri-up { top: -26px; left: 60px;}
+.products-box .saipan .pop-info-box { top: 42px; left: -14px; width: 210px; padding: 15px 10px; _padding: 15px 0 15px 12px;}
+.products-box .saipan .pop-info-box span { margin: 0 6px; _margin-right: 12px; _margin-left: 0;}
+.products-box .saipan .pop-info-box .icon-tri-up { top: -21px; left: 54px;}
+.products-box .android .pop-info-box { top: 56px; left: -190px; width: 328px; padding: 20px 20px 15px;}
+.products-box .android .pop-info-box .icon-tri-up { top: -26px; left: 250px;}
+.products-box .win7 .pop-info-box { top: 42px; left: 2px; width: 328px; padding: 20px 20px 10px;}
+.products-box .win7 .pop-info-box .icon-tri-up { top: -26px; left: 30px;}
+
+.products-box .txt-c { padding: 20px 0 0 15px; color: #555555;}
+.products-box .txt-c h4 { padding-bottom: 5px; font-weight: bold;}
+.products-box .txt-c li { padding-bottom: 5px;}
+
+.products-box .pic { position: relative; float: left; width: 450px; height: 500px; padding-top: 2px; overflow: hidden; background: url(i/mobie-bg.jpg) no-repeat;}
+.products-box .slide-wrapper { position: absolute; top: 85px; left: 59px; width: 188px; height: 320px; overflow: hidden; }
+.products-box .slide-wrapper img { width: 188px; height: 320px; border: 0;}
+.products-box .slide-nav { position: absolute; bottom: 15px; left: 34%;}
+.products-box .slide-nav li { position: relative; left: -50%; float: left; width: 12px; height: 13px; margin: 0 5px; background-position: -388px -250px; text-indent: -9999px; overflow: hidden; cursor: pointer;}
+.products-box .slide-nav li.cur { background-position: -388px -230px; cursor: default;}
+
+/*ipad*/
+.wrapper .ipad-box { padding: 0 25px 0 422px;}
+.ipad-box .txt .tit { height: 90px; background-position: 10px -140px; text-indent: -9999px; overflow: hidden;}
+.ipad-box .download-ipad { width: 390px; padding: 25px 0 25px 10px; border-bottom: 1px dashed #d6d6d6;}
+.ipad-box .download-ipad p { padding-bottom: 10px; font-size: 14px;}
+.ipad-box .download-ipad p a { color: #ff8400; }
+.ipad-box .download-ipad .btn-ipad { display: block; width: 228px; height: 44px; background-position: 0 -340px; text-indent: -9999px; overflow: hidden;}
+.ipad-box .download-ipad .btn-ipad:hover { background-position: 0 -570px;}
+.ipad-box .download-ipad .btn-ipad:active { background-position: 0 -620px;}
+.ipad-box .pic { position: relative; width: 475px; height: 421px; padding: 62px 0 0 35px; overflow: hidden; background: url(i/ipad-bg.jpg) no-repeat 35px 62px;}
+.ipad-box .slide-wrapper { position: absolute; top: 98px; left: 78px; width: 392px; height: 300px; overflow: hidden; }
+.ipad-box .slide-wrapper img { width: 392px; height: 300px; border: 0;}
+.ipad-box .slide-nav { left: 50%;}
+
+/*features-list-box*/
+.features-list-box { padding-top: 40px;}
+.features-list-box li { float: left; width: 230px; padding: 0 20px 35px 70px;}
+.features-list-box .pic { float: left; margin-left: -70px; _margin-left: -35px;}
+.features-list-box li i { width: 50px; height: 50px;}
+.icon-search { background-position: 0 -390px;}
+.icon-deal { background-position: -50px -390px;}
+.icon-sale { background-position: -100px -390px;}
+.icon-shop { background-position: -150px -390px;}
+.icon-map { background-position: -200px -390px;}
+.icon-rank { background-position: -250px -390px;}
+.features-list-box .tit { font-size: 14px; font-weight: bold; color: #555555;}
+.features-list-box .txt { color: #999999; line-height: 1.8;}
+
+/* wap-box */
+.wap-box .txt { padding-top: 125px;}
+.wap-box .txt .tit { height: 90px; margin-bottom: 30px; background-position: 10px -680px;}
+.wap-box .txt .txt-c { padding-top: 25px; border-top: 1px dashed #d6d6d6;}
+.wap-box .txt-c p { padding-bottom: 10px; font-size: 14px;}
+.wap-box .txt-c .input-box { width: 286px; height: 29px; padding: 10px 10px 0; background-position: 0 -780px;}
+.wap-box .input-box input { margin: 0; padding: 0; border: 0 none; color: #ff8400; font-size: 14px; background-color: transparent; font-weight: bold;}
+.wap-box .pic { background: url(i/wap-bg.jpg) no-repeat;}
+
+.collaborate { padding: 10px 10px 15px; color: #555;}
+.collaborate a { color: #555;}
+.collaborate a:hover { text-decoration: underline;}
+
