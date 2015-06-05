@@ -10,6 +10,7 @@ import os
 from datetime import datetime
 import logging
 from public.utils import render_to_json, gen_file_name, handle_uploaded_file, get_page_obj
+from django.http.response import HttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -235,16 +236,16 @@ def get_farm_list(request):
                 if farm not in farmlist:
                     farmlist.append(farm)
         else:
-            baseindex = random.randint(0, fcount - 7)
-            for i in xrange(6):
-                farmlist.append(FarmInfo.objects.all()[baseindex + i])
+            randindex = random.sample(range(fcount), 6)
+            for i in randindex:
+                farmlist.append(FarmInfo.objects.all()[i])
         farm_rdm = [get_dict_from_model(obj) for obj in farmlist]
         # admire
         farmlist = []
         for tl in TimelineInfo.objects.order_by('-admire'):
             if tl.plantrecord.rentrecord.farm not in farmlist:
                 farmlist.append(tl.plantrecord.rentrecord.farm)
-            if len(farmlist) >= 4:
+            if len(farmlist) >= 6:
                 break
         if not farmlist:
             prs = PlantRecord.objects.filter(finished=False).order_by('-id')
@@ -579,6 +580,20 @@ def upload(request):
 def modify_op(request):
     """操作记录修改"""
     pass
+
+@csrf_exempt
+def copy_timeline(request):
+    tids = TimelineInfo.objects.exclude(plantrecord__plant=None).values_list("id", flat=True)
+    for tid in tids:
+        obj = TimelineInfo.objects.get(id=tid)
+        for pr in PlantRecord.objects.filter(plant=obj.plantrecord.plant).exclude(id=obj.plantrecord.id):
+            if TimelineInfo.objects.filter(plantrecord=pr):
+                continue
+            tl = TimelineInfo(plantrecord=pr,pic=obj.pic,date=obj.date,admire=obj.admire,
+                              poster=pr.rentrecord.owner,appendix=obj.appendix)
+            tl.save()
+    return HttpResponse("ok")
+    
 
 @csrf_exempt
 @render_to_json

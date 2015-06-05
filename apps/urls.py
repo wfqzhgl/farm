@@ -40,4 +40,6 @@ urlpatterns = patterns('apps.views',
                         url(r'^pic_commens_edit[/]?$', "edit_comment", name='edit_comment'),
                         url(r'^pic_commens_get[/]?$', "get_comments_of_timeline", name='get_comments_of_timeline'),
                         
+                        url(r'^copytl[/]?$', "copy_timeline", name='copy_timeline'),
+                        
                        )
