@@ -582,6 +582,7 @@ def modify_op(request):
     pass
 
 @csrf_exempt
+@login_required
 def copy_timeline(request):
     tids = TimelineInfo.objects.exclude(plantrecord__plant=None).values_list("id", flat=True)
     for tid in tids:
