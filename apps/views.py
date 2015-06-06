@@ -584,15 +584,22 @@ def modify_op(request):
 @csrf_exempt
 @login_required
 def copy_timeline(request):
+    # copy timeline
     tids = TimelineInfo.objects.exclude(plantrecord__plant=None).values_list("id", flat=True)
     for tid in tids:
         obj = TimelineInfo.objects.get(id=tid)
         for pr in PlantRecord.objects.filter(plant=obj.plantrecord.plant).exclude(id=obj.plantrecord.id):
-            if TimelineInfo.objects.filter(plantrecord=pr):
+            if TimelineInfo.objects.filter(plantrecord=pr, date=obj.date):
                 continue
-            tl = TimelineInfo(plantrecord=pr,pic=obj.pic,date=obj.date,admire=obj.admire,
-                              poster=pr.rentrecord.owner,appendix=obj.appendix)
+            tl = TimelineInfo(plantrecord=pr, pic=obj.pic, date=obj.date, admire=obj.admire,
+                              poster=pr.rentrecord.owner, appendix=obj.appendix)
             tl.save()
+    
+    # #plant valid
+#     not_plant = [u'韭菜', u'蒜苗', u'茴香', u'土豆', u'莴苣', u'秋葵']
+#     pls = PlantInfo.objects.exclude(name__in=not_plant)
+#     for farm in FarmInfo.objects.all():
+#         farm.plants.add(*pls)
     return HttpResponse("ok")
     
 
