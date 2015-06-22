@@ -554,10 +554,9 @@ class TimelineCreate(CreateView):
             filename1 = gen_file_name(file1)  # 生成文件 
             handle_uploaded_file(os.path.join(settings.MEDIA_ROOT, filename1), file1)
             if filename1:
-                saveurl = '/media/' + filename1
+                saveurl = os.path.join(settings.MEDIA_URL, filename1)
                 self.object.pic = saveurl
                 self.object.save()
-                url = os.path.join(settings.MEDIA_URL, filename1)
         return super(TimelineCreate, self).form_valid(form)
     
 #     def form_valid(self, form):
