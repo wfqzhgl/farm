@@ -7,6 +7,8 @@ from forms import *
 from helper import *
 import random
 import os
+from django.views.generic import ListView
+from django.views.generic.edit import CreateView, UpdateView
 from datetime import datetime
 import logging
 from public.utils import render_to_json, gen_file_name, handle_uploaded_file, get_page_obj
@@ -425,6 +427,11 @@ def apply_for_farm(request):
     except Exception, e:
         code = 1
         return dict(code=1, msg='no user error', value=[])
+    
+    #check balance
+    if consume > 0.0 and userinfo.balance < consume:
+        return dict(code=1, msg='balance not enough.', value=[])
+    
     today = datetime.now().date()
     plantrecord = None
     if type == 'PLANT':
@@ -522,10 +529,75 @@ def search(request):
     pass
 
 
+class TimelineCreate(CreateView):
+    model = TimelineInfo
+    template_name_suffix = "_create_form"
+    def get_form(self, form_class):
+            form = super(TimelineCreate, self).get_form(form_class)
+            form.fields['plantrecord'].widget.attrs.update({'class': 'form-control'})
+            form.fields['pic'].widget.attrs.update({'class': 'form-control'})
+            form.fields['date'].widget.attrs.update({'class': 'form-control'})
+            form.fields['appendix'].widget.attrs.update({'class': 'form-control'})
+            form.fields['poster'].widget.attrs.update({'class': 'form-control'})
+            return form
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(TimelineCreate, self).get_context_data(**kwargs)
+        context['request'] = self.request
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if 'pic_file' in self.request.FILES:
+            file1 = self.request.FILES.get('pic_file')
+            filename1 = gen_file_name(file1)  # 生成文件 
+            handle_uploaded_file(os.path.join(settings.MEDIA_ROOT, filename1), file1)
+            if filename1:
+                saveurl = '/media/' + filename1
+                self.object.pic = saveurl
+                self.object.save()
+                url = os.path.join(settings.MEDIA_URL, filename1)
+        return super(TimelineCreate, self).form_valid(form)
+    
+#     def form_valid(self, form):
+#         self.object = form.save()
+#         if 'intro_pic' in self.request.FILES:
+#             file=self.request.FILES['intro_pic']
+#             filename=gen_file_name(file)  #生成文件 
+#             handle_uploaded_file(os.path.join(settings.MEDIA_ROOT,filename),file)
+# #            saveurl=re.sub(r'\\','/',os.path.join(settings.MEDIA_URL,filename))
+#             saveurl='/media/'+filename
+#             self.object.intro_pic=saveurl
+#             self.object.intro_pic_cdn=get_cdn_url(settings.MEDIA_URL+saveurl)
+#             self.object.save()
+#         return super(BcateCreate, self).form_valid(form)
+    success_url = "/apps/time_line_list/"
+
+
+
+class TimelineView(ListView):
+    def get_paginate_by(self, queryset):
+        """
+        Get the number of items to paginate by, or ``None`` for no pagination.
+        """
+        self.paginate_by = self.kwargs.get('numperpage') or self.request.GET.get('numperpage') or settings.DEFAULT_NUM_PER_PAGE
+        return self.paginate_by  # objects per page
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(TimelineView, self).get_context_data(**kwargs)
+        context['request'] = self.request
+        return context
+#    context_object_name = "book_list"  ##default as object_list
+    queryset = TimelineInfo.objects.all().order_by('-id')
+    template_name = "apps/timeline_list.html"
+
+
 @csrf_exempt
 @render_to_json
 @login_check
-def upload_time_line(request):
+def upload_time_line_api(request):
     """图片上传
         fid 此图片对应的farm id
         pic

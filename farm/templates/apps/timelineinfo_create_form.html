@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block head_extra%}
+
+<script>
+
+$.datepicker.regional['zh-CN'] = {
+        clearText: '清除',
+        clearStatus: '清除已选日期',
+        closeText: '关闭',
+        closeStatus: '不改变当前选择',
+        prevText: '<上月',
+        prevStatus: '显示上月',
+        prevBigText: '<<',
+        prevBigStatus: '显示上一年',
+        nextText: '下月>',
+        nextStatus: '显示下月',
+        nextBigText: '>>',
+        nextBigStatus: '显示下一年',
+        currentText: '今天',
+        currentStatus: '显示本月',
+        monthNames: ['一月','二月','三月','四月','五月','六月', '七月','八月','九月','十月','十一月','十二月'],
+        monthNamesShort: ['一','二','三','四','五','六', '七','八','九','十','十一','十二'],
+        monthStatus: '选择月份',
+        yearStatus: '选择年份',
+        weekHeader: '周',
+        weekStatus: '年内周次',
+        dayNames: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+        dayNamesShort: ['周日','周一','周二','周三','周四','周五','周六'],
+        dayNamesMin: ['日','一','二','三','四','五','六'],
+        dayStatus: '设置 DD 为一周起始',
+        dateStatus: '选择 m月 d日, DD',
+        dateFormat: 'yy-mm-dd',
+        firstDay: 1,
+        initStatus: '请选择日期',
+        isRTL: false};
+$.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+$(document).ready(function(){
+
+       	 $( "#id_date" ).datepicker({
+		// defaultDate: "+1w",
+         maxDate:'0d',
+		 dateFormat:"yy-mm-dd",
+		 changeMonth: true,
+		 numberOfMonths: 1,
+         firstDay: 1,
+		 onClose: function( selectedDate ) {
+		 //$( "#stat_end" ).datepicker( "option", "minDate", selectedDate );
+		 }
+		 });
+	
+});
+
+</script>
+
+{%endblock %}
+
+
+{% block nav_list%} 
+	<li class="active"><a href="/apps/upload_time_line/">Timeline管理</a></li>
+{% endblock %}
+
+
+
+{% block content%}
+	<form enctype="multipart/form-data" action="/apps/upload_time_line/" method="post" >{% csrf_token %}
+	
+	<h4>新建-TimeLine</h4><br>
+	
+	<div class="form-group">
+		<label for="plantrecord">种植记录</label>
+		{{form.plantrecord}}
+		<font color='red'>{{form.plantrecord.errors}}</font>
+	</div>
+	
+	<div class="form-group">
+		<label for="pic_file">照片</label>
+		{{form.pic_file}}
+		<font color='red'>{{form.pic_file.errors}}</font>
+	</div>
+
+	<div class="form-group">
+		<label for="date">日期</label>
+		{{form.date}}
+		<font color='red'>{{form.date.errors}}</font>
+	</div>
+
+	<div class="form-group">
+			<label for="admire">点赞</label>
+			{{form.admire}}
+			<font color='red'>{{form.admire.errors}}</font>
+	</div>
+	
+	<div class="form-group">
+		<label for="appendix">说明</label>
+		{{form.appendix}}
+		<font color='red'>{{form.appendix.errors}}</font>
+	</div>
+		<div class="form-group">
+		<label for="poster">所属人</label>
+		{{form.poster}}
+		<font color='red'>{{form.poster.errors}}</font>
+	</div>	
+	<div class="form-group">
+ 		<input type="submit" class="btn btn-default" value="保存" id="submit" name="submit" />
+ 		<input type="button" class="btn btn-default" value="返回" onclick="javascript:location.href='/apps/time_line_list/'" />
+ 	</div>
+	
+	</form>
+
+ 
+{% endblock %}

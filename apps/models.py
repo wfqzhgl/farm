@@ -166,12 +166,13 @@ class TimelineInfo(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     plantrecord = models.ForeignKey("PlantRecord", verbose_name="PlantRecord id")
     pic = models.CharField("pic", max_length=256, blank=True, null=True)
+    pic_file = models.FileField(u"图片", upload_to='.', help_text='', blank=True, null=True)
     admire = models.IntegerField("admire", default=0)
     date = models.DateTimeField("date")
     poster = models.ForeignKey("UserInfo", verbose_name="poster_id", blank=True, null=True)
     appendix = models.CharField("appendix", max_length=200)
     comments = models.ManyToManyField("Comment", verbose_name="Comments", blank=True, null=True)
-    created = models.DateTimeField("创建时间", auto_now_add=True)
+    created = models.DateTimeField(u"创建时间", auto_now_add=True)
     class Meta:
 #         unique_together = (("brand", "province"),)
         verbose_name = "TimelineInfo"

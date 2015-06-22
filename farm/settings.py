@@ -1,4 +1,4 @@
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 """
 Django settings for farm project.
 
@@ -28,6 +28,10 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR + "/farm/", 'templates'),
+)
+
 ALLOWED_HOSTS = []
 
 
@@ -40,6 +44,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_admin_bootstrapped.bootstrap3',
+    'django_admin_bootstrapped',
+    'django.contrib.admindocs',
     'gunicorn',
     'public',
     'apps'
@@ -103,16 +110,30 @@ MEDIA_URL = 'http://www.babifarm.com/media/'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/web/farm/static/'
+STATICFILES_FINDERS = [
+            'django.contrib.staticfiles.finders.FileSystemFinder',
+            'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        ]
+             
+STATICFILES_DIRS = (
+            os.path.join(PROJECT_PATH, '../static'),
+#             '/web/farm/static/'
+        )
+print STATICFILES_DIRS
+
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+DEFAULT_NUM_PER_PAGE = 30
 FARM_DAILY_COST = 1
 
 CLIENT_XXTEA_KEY_PREFIX = "a90ksdf3609ec3c97c59"
 REDIS_CLIENT = redis.Redis(host="127.0.0.1", port=6379)
 
-##cache key
-#hashkey for uid Token
-HASHKEY_APPS_USER_TOKEN='hashkey_apps_user_token'
+# #cache key
+# hashkey for uid Token
+HASHKEY_APPS_USER_TOKEN = 'hashkey_apps_user_token'
 
-#默认每页行数
+# 默认每页行数
 ROWS_DEFAULT = 30
-#token header key
+# token header key
 VEG_SESSION_HEADER_KEY = "HTTP_VEGSESSION"

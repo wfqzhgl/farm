@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+
+{% block head_extra%}
+
+<script>
+
+$(document).ready(function(){
+	
+});
+
+</script>
+
+{%endblock %}
+
+
+{% block nav_list%} 
+	<li class="active"><a href="/apps/upload_time_line/">Timeline管理</a></li>
+{% endblock %}
+
+
+{% block content%}
+    
+    <div class="form-group">
+    	<input type="button" class="btn btn-default" value="新增" onclick="javascript:location.href='/apps/upload_time_line/'" />
+    </div>
+    
+    <table id="table_timeline_list" style="width:100%"> 
+	    <thead> 
+	    <tr> 
+	        <th style="text-align:left;">所属种植记录</th> 
+	        <th style="text-align:left;">图片</th>
+	        <th style="text-align:left;">日期</th> 
+	    </tr> 
+	    </thead> 
+	    <tbody> 
+	    {% for object in page_obj.object_list %}
+	    <tr> 
+	        <td>{{ object.plantrecord }}</td>
+	        <td>{{ object.pic }}</td> 
+	        <td>{{ object.date }}</td> 
+	        
+	        
+	    </tr> 
+	    {% endfor %}
+	    </tbody> 
+    </table>  
+    
+    <!-- 分页控件 -->
+		 <div id="pager" style="text-align:right">
+	       
+	       <!-- {%if page_obj%} -->
+	       	<!--	<strong>{{page_obj.start_index}}&nbsp;-&nbsp;{{page_obj.end_index}}&nbsp;&nbsp;of&nbsp;&nbsp;{{page_obj.paginator.count}}</strong> -->
+	       	<!--	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+	      <!-- {%endif%} -->
+	       {% if page_obj.has_previous %}
+	        <a href="#" onclick="get_page(1)">首页</a>
+	        <a href="#" onclick="get_page({{page_obj.previous_page_number}})">上一页</a>
+	       {% endif %}
+	       
+	       {% if page_obj %}
+	       	第{{page_obj.number}}页&nbsp;共{{ page_obj.paginator.num_pages }}页      
+	       	{% endif %}
+	       
+	       {% if page_obj.has_next %}
+	        <a href="#" onclick="get_page({{page_obj.next_page_number}})">下一页</a>
+	        <a href="#" onclick="get_page({{page_obj.paginator.num_pages}})">末页</a>
+	       {% endif %}
+	       
+	       	&nbsp;&nbsp;&nbsp;页号 
+	       	<select id="page_select" onChange="get_page_selected()">
+		       	{%for pagenum in page_obj.paginator.page_range%}
+		       		{%ifequal page_obj.number pagenum%}
+		       		<option selected="selected">{{pagenum}}</option>
+		       		{%else%}
+		       		<option>{{pagenum}}</option>
+		       		{%endifequal%}
+		       	{%endfor%}
+	       	</select>
+	  	</div>
+{% endblock %}

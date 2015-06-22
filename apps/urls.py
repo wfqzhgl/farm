@@ -17,6 +17,10 @@ urlpatterns = patterns('apps.views',
                         url(r'^change_psw[/]?$', "change_psw", name='change_psw'),
                         
                         url(r'^rdm_cus[/]?$', "rdm_user_info", name='rdm_user_info'),
+                        
+                        url(r'^upload_time_line[/]?$', login_required(TimelineCreate.as_view()), name='upload_time_line'),
+                        url(r'^time_line_list[/]?$', login_required(TimelineView.as_view()), name='list_timeline'),
+                        
                         url(r'^time_line[/]?$', "get_time_line", name='get_time_line'),
                         url(r'^pic_praise[/]?$', "pic_praise", name='pic_praise'),
                         
